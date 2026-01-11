@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: probot_description
+    relative_path: urdf/probot_anno.xacro
+  srdf:
+    relative_path: config/probot_anno.srdf
+  package_settings:
+    author_name: youssef
+    author_email: youssef.nagy073@gmail.com
+    generated_timestamp: 1767662517
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="probot_gripper" params="parent *origin">
+
+    <joint name="gripper_base_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="gripper_base" />
+      <xacro:insert_block name="origin" />
+    </joint>
+
+    <link name="gripper_base">
+      <inertial>
+        <origin xyz="0.0033936 0.0039094 0.136475" rpy="0 0 0" />
+        <mass value="0.014348" />
+        <inertia ixx="5.843E-06" ixy="-2.908E-07" ixz="-6.459E-08" iyy="6.430E-06" iyz="-1.969E-07" izz="3.109E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/gripper_base.STL" />
+        </geometry>
+        <material name="grey">
+          <color rgba="0.639 0.666 0.678 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/gripper_base.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="finger1">
+      <inertial>
+        <origin xyz="-0.002035 0.019077 0.000525" rpy="0 0 0" />
+        <mass value="0.007828" />
+        <inertia ixx="3.772E-06" ixy="8.020E-07" ixz="3.767E-10" iyy="1.086E-06" iyz="-3.563E-09" izz="4.725E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/finger1.STL" />
+        </geometry>
+        <material name="silver">
+          <color rgba="0.792 0.819 0.933 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/finger1.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="finger_joint1" type="revolute">
+      <origin xyz="-0.000050192 0.048 0.10015" rpy="1.5708 0 1.5708" />
+      <parent link="gripper_base" />
+      <child link="finger1" />
+      <axis xyz="0 0 1" />
+      <limit lower="-1.57" upper="1.57" effort="0.1" velocity="0.1" />
+    </joint>
+
+    <link name="finger2">
+      <inertial>
+        <origin xyz="-0.003855 0.018793 -0.002724" rpy="0 0 0" />
+        <mass value="0.007828" />
+        <inertia ixx="3.594E-06" ixy="1.043E-06" ixz="7.168E-10" iyy="1.264E-06" iyz="-3.510E-09" izz="4.725E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/finger2.STL" />
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/finger2.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="finger_joint2" type="revolute">
+      <origin xyz="0.040469 -0.025905 0.10015" rpy="1.5708 0 -0.5236" />
+      <parent link="gripper_base" />
+      <child link="finger2" />
+      <axis xyz="0 0 1" />
+      <limit lower="-1.57" upper="1.57" effort="0.1" velocity="0.1" />
+      <mimic joint="finger_joint1" multiplier="1.0" offset="0.0" />
+    </joint>
+
+    <link name="finger3">
+      <inertial>
+        <origin xyz="-0.001815 0.019099 -0.002724" rpy="0 0 0" />
+        <mass value="0.007828" />
+        <inertia ixx="3.790E-06" ixy="7.709E-07" ixz="3.357E-10" iyy="1.068E-06" iyz="-3.567E-09" izz="4.725E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/finger3.STL" />
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/finger3.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="finger_joint3" type="revolute">
+      <origin xyz="-0.042669 -0.022095 0.10015" rpy="1.5708 0 -2.618" />
+      <parent link="gripper_base" />
+      <child link="finger3" />
+      <axis xyz="0 0 1" />
+      <limit lower="-1.57" upper="1.57" effort="0.1" velocity="0.1" />
+      <mimic joint="finger_joint1" multiplier="1.0" offset="0.0" />
+    </joint>
+
+  </xacro:macro>
+</robot>
