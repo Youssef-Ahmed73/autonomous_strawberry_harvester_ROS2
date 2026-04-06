@@ -8,10 +8,12 @@ Before you download the repo make sure you:
 
 ### 1-Have ros2 Humble installed
 You can download it by following this link: 
+
 https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
 
 ### 2-Have moveit2 package installed and setted up
 You can download it by following this link:
+
 https://youtu.be/c6Bxbq8UdaI?si=s2agZWoYEXX3tex0
 
 ## First time installing configurations
