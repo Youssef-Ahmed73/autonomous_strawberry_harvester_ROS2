@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <robot name="probot_anno" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:arg name="use_gazebo" default="true" />
   <xacro:property name="M_PI" value="3.1415926536"/>
 
   <link name="base_footprint"/>
@@ -261,41 +262,15 @@
     <parent link="link_6" />
     <child link="tool0" />
   </joint>
-
-  <!-- Transmissions for ROS Control -->
-  <xacro:macro name="transmission_block" params="joint_name">
-    <transmission name="tran1">
-      <type>transmission_interface/SimpleTransmission</type>
-      <joint name="${joint_name}">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      </joint>
-      <actuator name="motor1">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-    </transmission>
-  </xacro:macro>
-  
-  <xacro:transmission_block joint_name="joint_1"/>
-  <xacro:transmission_block joint_name="joint_2"/>
-  <xacro:transmission_block joint_name="joint_3"/>
-  <xacro:transmission_block joint_name="joint_4"/>
-  <xacro:transmission_block joint_name="joint_5"/>
-  <xacro:transmission_block joint_name="joint_6"/>
-
-  <!-- ros_control plugin -->
-  <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/probot_anno</robotNamespace>
-      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-      <legacyModeNS>true</legacyModeNS>
-    </plugin>
-  </gazebo>
   
   <xacro:include filename="$(find probot_description)/urdf/gripper.xacro" />
   <xacro:probot_gripper parent="tool0">
     <origin xyz="0 0 0" rpy="1.507 0 0" /> 
   </xacro:probot_gripper>
 
-
+  <xacro:if value="$(arg use_gazebo)">
+    <xacro:include filename="$(find probot_description)/urdf/probot.ros2_control.xacro" />
+    <xacro:probot_ros2_control name="GazeboSystem"/>
+  </xacro:if>
+  
 </robot>

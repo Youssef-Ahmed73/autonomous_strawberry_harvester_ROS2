@@ -1,0 +1,28 @@
+/**:
+  ros__parameters:
+    use_gazebo: true
+    status_topic: "~/status"
+    command_in_type: "speed_units"
+    scale:
+      linear: 0.4
+      rotational: 0.8
+      joint: 0.5
+    low_pass_filter_coeff: 2.0
+    publish_period: 0.034
+    command_out_topic: "/arm_controller/joint_trajectory"
+    command_out_type: "trajectory_msgs/JointTrajectory"
+    publish_joint_positions: true
+    publish_joint_velocities: false
+    publish_joint_accelerations: false
+    joint_topic: "/joint_states"
+    is_primary_planning_scene_monitor: false
+    check_collisions: true
+    collision_check_rate: 10.0
+    collision_check_type: "threshold_distance"
+    self_collision_proximity_threshold: 0.01
+    scene_collision_proximity_threshold: 0.02
+    move_group_name: "arm"
+    robot_link_command_frame: "base_link"
+    ee_frame_name: "tool0"
+    smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"
+    trajectory_msgs_prefix: ""

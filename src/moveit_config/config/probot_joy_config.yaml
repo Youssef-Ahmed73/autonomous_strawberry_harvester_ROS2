@@ -1,0 +1,23 @@
+teleop_twist_joy_node:
+  ros__parameters:
+    publish_stamped_twist: true
+    frame: "base_link"
+    require_enable_button: false
+    
+    axis_linear:
+      x: 1
+      y: 0
+      z: 4
+    scale_linear:
+      x: 2.0
+      y: 2.0
+      z: 2.0
+      
+    axis_angular:
+      yaw: 6
+      pitch: 7
+      roll: 3
+    scale_angular:
+      yaw: 1.5
+      pitch: 1.5
+      roll: 1.5
