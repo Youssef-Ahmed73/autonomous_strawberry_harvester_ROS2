@@ -1,7 +1,7 @@
 # Default initial positions for probot_anno's ros2_control fake system
 
 initial_positions:
-  finger_joint1: 0
+  #finger_joint1: 0
   joint_1: 0
   joint_2: 0
   joint_3: 0

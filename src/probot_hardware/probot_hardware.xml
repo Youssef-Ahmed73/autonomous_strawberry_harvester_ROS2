@@ -1,0 +1,9 @@
+<library path="probot_hardware">
+  <class name="probot_hardware/ProbotSystemHardware"
+         type="probot_hardware::ProbotSystemHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Custom hardware interface for sending Int16MultiArray to ESP32 over micro-ROS.
+    </description>
+  </class>
+</library>
