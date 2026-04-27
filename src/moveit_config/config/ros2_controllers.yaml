@@ -27,7 +27,7 @@ arm_controller:
       - position
     state_interfaces:
       - position
-      - velocity
+      #- velocity
 #ee_controller:
 #  ros__parameters:
 #    joints:
