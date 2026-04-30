@@ -7,8 +7,11 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
-    #ee_controller:
-    #  type: joint_trajectory_controller/JointTrajectoryController
+    ee_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    iris_controller:
+      type: forward_command_controller/ForwardCommandController  
 
 
     joint_state_broadcaster:
@@ -28,12 +31,19 @@ arm_controller:
     state_interfaces:
       - position
       #- velocity
-#ee_controller:
-#  ros__parameters:
-#    joints:
-#      - finger_joint1
-#    command_interfaces:
-#      - position
-#    state_interfaces:
-#      - position
+
+ee_controller:
+  ros__parameters:
+    joints:
+      - Active_Gear_Joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
 #      - velocity
+
+iris_controller:
+  ros__parameters:
+    joints:
+      - iris_shutter
+    interface_name: state

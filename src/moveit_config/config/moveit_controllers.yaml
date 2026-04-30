@@ -5,8 +5,9 @@ moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControll
 moveit_simple_controller_manager:
   controller_names:
     - arm_controller
-  #  - ee_controller
-
+    - ee_controller
+    
+    
   arm_controller:
     type: FollowJointTrajectory
     action_ns: follow_joint_trajectory
@@ -17,8 +18,10 @@ moveit_simple_controller_manager:
       - joint_4
       - joint_5
       - joint_6
-  #ee_controller:
-   # type: FollowJointTrajectory
-   # action_ns: follow_joint_trajectory
-   # joints:
-   #   - finger_joint1
+
+  ee_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    joints:
+      - Active_Gear_Joint
+     

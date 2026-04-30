@@ -65,6 +65,19 @@
                 </state_interface>
                 <!--state_interface name="velocity"/-->
             </joint>
+
+            <joint name="Active_Gear_Joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Active_Gear_Joint']}</param>
+                </state_interface>
+            </joint>
+
+            <gpio name="iris_shutter">
+                <command_interface name="state"/>
+                <state_interface name="state"/>
+            </gpio>
+            
             </ros2_control>
     </xacro:macro>
 </robot>

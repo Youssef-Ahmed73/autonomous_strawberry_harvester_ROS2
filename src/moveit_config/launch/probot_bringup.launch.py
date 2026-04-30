@@ -141,6 +141,12 @@ def generate_launch_description():
         arguments=["arm_controller", "--controller-manager", "/controller_manager"],
     )
 
+    ee_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["ee_controller", "--controller-manager", "/controller_manager"],
+    )    
+
 
     # ---------------------------------------------------------
     # Return Launch Description
@@ -169,4 +175,5 @@ def generate_launch_description():
         # Controller Spawners
         joint_state_broadcaster_spawner,
         arm_controller_spawner,
+        ee_controller_spawner,
     ])

@@ -50,13 +50,13 @@
                 </state_interface>
                 <state_interface name="velocity"/>
             </joint>
-            <!--joint name="finger_joint1">
+            <joint name="Active_Gear_Joint">
                 <command_interface name="position"/>
                 <state_interface name="position">
-                  <param name="initial_value">${initial_positions['finger_joint1']}</param>
+                  <param name="initial_value">${initial_positions['Active_Gear_Joint']}</param>
                 </state_interface>
                 <state_interface name="velocity"/>
-            </joint-->
+            </joint>
 
         </ros2_control>
     </xacro:macro>

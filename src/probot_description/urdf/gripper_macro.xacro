@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="probot_gripper" params="parent">
+
+    <joint name="gripper_fix" type="fixed">
+      <origin xyz="0 -0.013 0" rpy="1.5708 0 0" />
+      <parent link="${parent}" />
+      <child link="container_link" />
+    </joint>
+
+    <link name="container_link">
+      <inertial>
+        <origin xyz="0.000447954091404787 -0.00107076507649284 0.0812946823616097" rpy="0 0 0" />
+        <mass value="0.681340710246045" />
+        <inertia ixx="0.00162547625339366" ixy="-1.15400897004502E-05" ixz="-0.000149060142106832" iyy="0.00119115753501657" iyz="-5.15077727016555E-06" izz="0.00199811682178253" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry><mesh filename="package://probot_description/meshes/container_link.STL" /></geometry>
+        <material name="grey"><color rgba="0.698 0.698 0.698 1" /></material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry><mesh filename="package://probot_description/meshes/container_link.STL" /></geometry>
+      </collision>
+    </link>
+
+    <link name="Active_Gear_Link">
+      <inertial>
+        <origin xyz="0.00040341000589738 -0.0028994921557112 0.00197147955183292" rpy="0 0 0" />
+        <mass value="0.00284856456686766" />
+        <inertia ixx="2.35656397042425E-07" ixy="8.29499629182763E-10" ixz="-2.06306214180894E-08" iyy="3.62849121452055E-07" iyz="4.23956057615974E-09" izz="1.36875683236315E-07" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry><mesh filename="package://probot_description/meshes/Active_Gear_Link.STL" /></geometry>
+        <material name="grey"/>
+      </visual>
+    </link>
+
+    <joint name="Active_Gear_Joint" type="revolute">
+      <origin xyz="0.0437309784718086 -0.0355318582436578 0.122199999999998" rpy="-1.5707963267949 0 -1.57776049235038" />
+      <parent link="container_link" />
+      <child link="Active_Gear_Link" />
+      <axis xyz="0 -1 0" />
+      <limit lower="-0.56" upper="0" effort="10" velocity="6.28" /> 
+    </joint>
+
+    <link name="Active_Blade_Link">
+      <inertial>
+        <origin xyz="-0.00154255115951425 -0.0255142318483652 -0.0018089155442183" rpy="0 0 0" />
+        <mass value="0.00546626517024223" />
+        <inertia ixx="1.61947094236475E-06" ixy="2.3864307836331E-08" ixz="1.49553151926955E-10" iyy="2.91612156814121E-08" iyz="1.41923125794946E-09" izz="1.64459449291055E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry><mesh filename="package://probot_description/meshes/Active_Blade_Link.STL" /></geometry>
+        <material name="robot_color"/>
+      </visual>
+    </link>
+
+    <joint name="Active_Blade_Joint" type="fixed">
+      <origin xyz="-0.00858698517037926 -0.0104000000000003 -1.5518750895907E-05" rpy="1.57079632679489 0.466732735623451 0" />
+      <parent link="Active_Gear_Link" />
+      <child link="Active_Blade_Link" />
+    </joint>
+
+    <link name="Passive_Gear_Link">
+      <inertial>
+        <origin xyz="-0.000253400477745899 -0.00227133697178923 0.00309286454693159" rpy="0 0 0" />
+        <mass value="0.00320790725939746" />
+        <inertia ixx="2.82029475359522E-07" ixy="-1.16262919185086E-09" ixz="1.21504474417119E-08" iyy="4.04760375455283E-07" iyz="1.34798056582785E-08" izz="1.37169661043404E-07" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry><mesh filename="package://probot_description/meshes/Passive_Gear_Link.STL" /></geometry>
+        <material name="grey"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry><mesh filename="package://probot_description/meshes/Passive_Gear_Link.STL" /></geometry>
+      </collision>
+    </link>
+
+    <joint name="Passive_Gear_Joint" type="revolute">
+      <origin xyz="0.055356 -0.011777 0.1231" rpy="-1.5708 0 -2.4629" />
+      <parent link="container_link" />
+      <child link="Passive_Gear_Link" />
+      <axis xyz="0 -1 0" />
+      <limit lower="0" upper="6.28" effort="10" velocity="6.28" />
+      <mimic joint="Active_Gear_Joint" multiplier="-1.0" offset="0" />
+    </joint>
+
+    <link name="Passive_Blade_Link">
+      <inertial>
+        <origin xyz="-0.0108189596133123 0.0232787197714948 0.00489030573864965" rpy="0 0 0" />
+        <mass value="0.00546978333218875" />
+        <inertia ixx="1.39437733552038E-06" ixy="5.61593218262089E-07" ixz="7.42692648485945E-10" iyy="2.59809958482698E-07" iyz="-1.33879102104523E-09" izz="1.65014466299776E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry><mesh filename="package://probot_description/meshes/Passive_Blade_Link.STL" /></geometry>
+        <material name="robot_color"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry><mesh filename="package://probot_description/meshes/Passive_Blade_Link.STL" /></geometry>
+      </collision>
+    </link>
+
+    <joint name="Passive_Blade_Joint" type="fixed">
+      <origin xyz="0.012465980541461 -0.00399999999999064 0.00164188866873218" rpy="-1.57079632679489 0.126637396622301 3.14159265358979" />
+      <parent link="Passive_Gear_Link" />
+      <child link="Passive_Blade_Link" />
+    </joint>
+
+    </xacro:macro>
+</robot>
