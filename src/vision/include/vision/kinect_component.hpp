@@ -1,18 +1,18 @@
-#ifndef ESP_VISION__KINECT_COMPONENT_HPP_
-#define ESP_VISION__KINECT_COMPONENT_HPP_
+#ifndef VISION__KINECT_COMPONENT_HPP_
+#define VISION__KINECT_COMPONENT_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
 #include <libfreenect.h>
-#include "esp_vision/visibility_control.h"
+#include "vision/visibility_control.h"
 
-namespace esp_vision
+namespace vision
 {
 class KinectComponent : public rclcpp::Node
 {
 public:
-  ESP_VISION_PUBLIC
+  VISION_PUBLIC
   explicit KinectComponent(const rclcpp::NodeOptions & options);
   ~KinectComponent() override;
 
@@ -38,6 +38,6 @@ private:
   cv::Mat rgbMat_;
   std::string camera_name_;
 };
-}  // namespace esp_vision
+}  // namespace vision
 
-#endif  // ESP_VISION__KINECT_COMPONENT_HPP_
+#endif  // VISION__KINECT_COMPONENT_HPP_

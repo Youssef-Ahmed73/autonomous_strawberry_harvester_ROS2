@@ -1,17 +1,17 @@
-#ifndef ESP_VISION__INFERENCE_COMPONENT_HPP_
-#define ESP_VISION__INFERENCE_COMPONENT_HPP_
+#ifndef VISION__INFERENCE_COMPONENT_HPP_
+#define VISION__INFERENCE_COMPONENT_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <onnxruntime_cxx_api.h>
-#include "esp_vision/visibility_control.h"
+#include "vision/visibility_control.h"
 
-namespace esp_vision
+namespace vision
 {
 class InferenceComponent : public rclcpp::Node
 {
 public:
-  ESP_VISION_PUBLIC
+  VISION_PUBLIC
   explicit InferenceComponent(const rclcpp::NodeOptions & options);
 
 private:
@@ -20,6 +20,6 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   std::unique_ptr<Ort::Session> session_;
 };
-}  // namespace esp_vision
+}  // namespace vision
 
-#endif  // ESP_VISION__INFERENCE_COMPONENT_HPP_
+#endif  // VISION__INFERENCE_COMPONENT_HPP_

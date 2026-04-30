@@ -1,10 +1,10 @@
-#include "esp_vision/inference_component.hpp"
+#include "vision/inference_component.hpp"
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/dnn.hpp>  // Using OpenCV's DNN module for easy pre-processing
 #include <onnxruntime_cxx_api.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
-namespace esp_vision
+namespace vision
 {
 
 InferenceComponent::InferenceComponent(const rclcpp::NodeOptions & options)
@@ -16,7 +16,7 @@ InferenceComponent::InferenceComponent(const rclcpp::NodeOptions & options)
   session_options.SetIntraOpNumThreads(1); // Set to CPU for now, just like python script
 
   // Resolve model path from the ROS 2 share directory
-  std::string pkg_share_dir = ament_index_cpp::get_package_share_directory("esp_vision");
+  std::string pkg_share_dir = ament_index_cpp::get_package_share_directory("vision");
   std::string model_path = pkg_share_dir + "/models/model.onnx";
 
   try {
@@ -112,7 +112,7 @@ void InferenceComponent::image_callback(sensor_msgs::msg::Image::UniquePtr msg)
   cv::waitKey(1);
 }
 
-}  // namespace esp_vision
+}  // namespace vision
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(esp_vision::InferenceComponent)
+RCLCPP_COMPONENTS_REGISTER_NODE(vision::InferenceComponent)

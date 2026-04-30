@@ -1,17 +1,17 @@
-#ifndef ESP_VISION__CAMERA_COMPONENT_HPP_
-#define ESP_VISION__CAMERA_COMPONENT_HPP_
+#ifndef VISION__CAMERA_COMPONENT_HPP_
+#define VISION__CAMERA_COMPONENT_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
-#include "esp_vision/visibility_control.h"
+#include "vision/visibility_control.h"
 
-namespace esp_vision
+namespace vision
 {
 class CameraComponent : public rclcpp::Node
 {
 public:
-  ESP_VISION_PUBLIC
+  VISION_PUBLIC
   explicit CameraComponent(const rclcpp::NodeOptions & options);
   ~CameraComponent() override;
 
@@ -24,6 +24,6 @@ private:
   std::string camera_name_;
   std::string stream_url_;
 };
-}  // namespace esp_vision
+}  // namespace vision
 
-#endif  // ESP_VISION__CAMERA_COMPONENT_HPP_
+#endif  // VISION__CAMERA_COMPONENT_HPP_

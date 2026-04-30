@@ -1,7 +1,7 @@
-#include "esp_vision/kinect_component.hpp"
+#include "vision/kinect_component.hpp"
 #include <cv_bridge/cv_bridge.h>
 
-namespace esp_vision
+namespace vision
 {
 
 KinectComponent::KinectComponent(const rclcpp::NodeOptions & options)
@@ -106,7 +106,7 @@ void KinectComponent::loop()
   depth_pub_->publish(std::move(depth_msg));
 }
 
-}  // namespace esp_vision
+}  // namespace vision
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(esp_vision::KinectComponent)
+RCLCPP_COMPONENTS_REGISTER_NODE(vision::KinectComponent)

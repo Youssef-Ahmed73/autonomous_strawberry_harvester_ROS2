@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(esp_vision)
+project(vision)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -21,7 +21,7 @@ target_include_directories(camera_component PRIVATE
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(camera_component ${OpenCV_LIBS})
 ament_target_dependencies(camera_component rclcpp rclcpp_components sensor_msgs cv_bridge)
-rclcpp_components_register_node(camera_component PLUGIN "esp_vision::CameraComponent" EXECUTABLE camera_node)
+rclcpp_components_register_node(camera_component PLUGIN "vision::CameraComponent" EXECUTABLE camera_node)
 
 # --- Build Inference Component (COMMENTED OUT FOR NOW) ---
 # add_library(inference_component SHARED src/inference_component.cpp)
@@ -30,7 +30,7 @@ rclcpp_components_register_node(camera_component PLUGIN "esp_vision::CameraCompo
 #   $<INSTALL_INTERFACE:include>)
 # target_link_libraries(inference_component ${OpenCV_LIBS} onnxruntime)
 # ament_target_dependencies(inference_component rclcpp rclcpp_components sensor_msgs cv_bridge)
-# rclcpp_components_register_node(inference_component PLUGIN "esp_vision::InferenceComponent" EXECUTABLE inference_node)
+# rclcpp_components_register_node(inference_component PLUGIN "vision::InferenceComponent" EXECUTABLE inference_node)
 
 
 # --- Build Kinect Component ---
@@ -42,7 +42,7 @@ target_include_directories(kinect_component PRIVATE
 # Notice we add "freenect" to the target_link_libraries here
 target_link_libraries(kinect_component ${OpenCV_LIBS} freenect)
 ament_target_dependencies(kinect_component rclcpp rclcpp_components sensor_msgs cv_bridge)
-rclcpp_components_register_node(kinect_component PLUGIN "esp_vision::KinectComponent" EXECUTABLE kinect_node)
+rclcpp_components_register_node(kinect_component PLUGIN "vision::KinectComponent" EXECUTABLE kinect_node)
 
 # Notice inference_component is removed from the TARGETS list below
 install(TARGETS 

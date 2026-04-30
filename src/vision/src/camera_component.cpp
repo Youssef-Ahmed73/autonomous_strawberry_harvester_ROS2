@@ -1,13 +1,13 @@
-#include "esp_vision/camera_component.hpp"
+#include "vision/camera_component.hpp"
 #include <cv_bridge/cv_bridge.h>
 
-namespace esp_vision
+namespace vision
 {
 
 CameraComponent::CameraComponent(const rclcpp::NodeOptions & options)
 : Node("camera_component", options)
 {
-  this->declare_parameter<std::string>("stream_url", "http://10.140.187.152:8080/video");
+  this->declare_parameter<std::string>("stream_url", "http://192.168.100.130:8080/video");
   this->declare_parameter<std::string>("camera_name", "cam_1");
 
   stream_url_ = this->get_parameter("stream_url").as_string();
@@ -53,7 +53,7 @@ void CameraComponent::timer_callback()
   image_pub_->publish(std::move(msg));
 }
 
-}  // namespace esp_vision
+}  // namespace vision
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(esp_vision::CameraComponent)
+RCLCPP_COMPONENTS_REGISTER_NODE(vision::CameraComponent)
