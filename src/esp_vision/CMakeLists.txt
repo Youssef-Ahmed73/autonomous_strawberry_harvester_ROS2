@@ -32,8 +32,22 @@ rclcpp_components_register_node(camera_component PLUGIN "esp_vision::CameraCompo
 # ament_target_dependencies(inference_component rclcpp rclcpp_components sensor_msgs cv_bridge)
 # rclcpp_components_register_node(inference_component PLUGIN "esp_vision::InferenceComponent" EXECUTABLE inference_node)
 
+
+# --- Build Kinect Component ---
+add_library(kinect_component SHARED src/kinect_component.cpp)
+target_include_directories(kinect_component PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+# Notice we add "freenect" to the target_link_libraries here
+target_link_libraries(kinect_component ${OpenCV_LIBS} freenect)
+ament_target_dependencies(kinect_component rclcpp rclcpp_components sensor_msgs cv_bridge)
+rclcpp_components_register_node(kinect_component PLUGIN "esp_vision::KinectComponent" EXECUTABLE kinect_node)
+
 # Notice inference_component is removed from the TARGETS list below
-install(TARGETS camera_component 
+install(TARGETS 
+  camera_component 
+  kinect_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
