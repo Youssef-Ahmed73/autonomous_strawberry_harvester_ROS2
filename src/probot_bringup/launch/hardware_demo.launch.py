@@ -17,12 +17,12 @@ def generate_launch_description():
     # ---------------------------------------------------------
     # 2. Include the Master Bringup (Forced to Real Hardware)
     # ---------------------------------------------------------
-    # Update 'moveit_config' if your probot_bringup.launch.py is located elsewhere
-    pkg_moveit_config = get_package_share_directory('moveit_config')
+    # Update 'probot_bringup' if your probot_bringup.launch.py is located elsewhere
+    pkg_probot_bringup = get_package_share_directory('probot_bringup')
     
     probot_bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_moveit_config, 'launch', 'probot_bringup.launch.py')
+            os.path.join(pkg_probot_bringup, 'launch', 'probot_bringup.launch.py')
         ),
         # Hardcode the hardware arguments so this file ALWAYS launches the real robot
         launch_arguments={
