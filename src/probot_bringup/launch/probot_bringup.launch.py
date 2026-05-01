@@ -16,9 +16,13 @@ def generate_launch_description():
     pkg_probot_description = get_package_share_directory('probot_description')
     pkg_moveit_config = get_package_share_directory('moveit_config') 
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
+    pkg_ashr_gazebo = get_package_share_directory('ashr_gazebo')
 
     controllers_yaml = os.path.join(pkg_moveit_config, 'config', 'ros2_controllers.yaml')
     rviz_config_file = os.path.join(pkg_moveit_config, 'config', 'moveit.rviz')
+
+    world_file = os.path.join(pkg_ashr_gazebo, 'worlds', 'ashr_world.sdf')
+    bridge_config_file = os.path.join(pkg_ashr_gazebo, 'config', 'bridge.yaml')
 
     # ---------------------------------------------------------
     # 2. Launch Configurations
@@ -99,14 +103,18 @@ def generate_launch_description():
     # ---------------------------------------------------------
     # 6. Gazebo (Ignition) Nodes (Conditional)
     # ---------------------------------------------------------
-    install_dir = os.path.join(pkg_probot_description, '..')
-    gz_resource_path = install_dir
+    probot_mesh_dir = os.path.join(pkg_probot_description, '..')
+    ashr_gazebo_mesh_dir = os.path.join(pkg_ashr_gazebo, '..')
+    
+    # Combine both package paths
+    gz_resource_path = probot_mesh_dir + ':' + ashr_gazebo_mesh_dir
+    
     if 'IGN_GAZEBO_RESOURCE_PATH' in os.environ:
-        gz_resource_path = os.environ['IGN_GAZEBO_RESOURCE_PATH'] + ':' + install_dir
+        gz_resource_path = os.environ['IGN_GAZEBO_RESOURCE_PATH'] + ':' + gz_resource_path
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-        launch_arguments={'gz_args': '-r empty.sdf'}.items(),
+        launch_arguments={'gz_args': f'-r {world_file}'}.items(), 
         condition=IfCondition(use_gazebo)
     )
 
@@ -121,8 +129,36 @@ def generate_launch_description():
     gz_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock'],
+        parameters=[{'config_file': bridge_config_file}],
         output='screen',
+        condition=IfCondition(use_gazebo)
+    )
+
+    #World to Kinect Base 
+    kinect_base_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='kinect_base_tf',
+        # x y z yaw pitch roll
+        arguments=['-0.026194', '-0.3355', '0.052501', '0', '0.000119', '0', 'world', 'camera_link'],
+        condition=IfCondition(use_gazebo)
+    )
+
+    #Kinect Base to RGB Frame
+    kinect_rgb_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='kinect_rgb_tf',
+        arguments=['0', '-0.012', '0', '0', '0', '0', 'camera_link', 'camera_rgb_frame'],
+        condition=IfCondition(use_gazebo)
+    )
+
+    #RGB Frame to Optical Frame
+    kinect_optical_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='kinect_optical_tf',
+        arguments=['0', '0', '0', '-1.5707', '0', '-1.5707', 'camera_rgb_frame', 'kinect/link/kinect_rgbd'], # <--- Changed :: to /
         condition=IfCondition(use_gazebo)
     )
 
@@ -171,6 +207,9 @@ def generate_launch_description():
         gazebo,
         spawn_entity,
         gz_bridge,
+        kinect_base_tf,     
+        kinect_rgb_tf,      
+        kinect_optical_tf,  
 
         # Controller Spawners
         joint_state_broadcaster_spawner,

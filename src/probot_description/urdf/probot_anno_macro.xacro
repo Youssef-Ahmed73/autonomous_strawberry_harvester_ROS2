@@ -4,10 +4,10 @@
   <xacro:macro name="probot_anno_macro">
     <xacro:property name="M_PI" value="3.1415926536"/>
 
-    <link name="base_footprint"/>
+    <link name="world"/>
     <joint name="joint_0" type="fixed">
       <origin xyz="0 0 0.0532" rpy="0 0 0" />
-      <parent link="base_footprint" />
+      <parent link="world" />
       <child link="base_link" />
     </joint>
 
