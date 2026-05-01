@@ -73,6 +73,14 @@
                 </state_interface>
             </joint>
 
+            <xacro:if value="${use_gazebo}">
+                <joint name="Passive_Gear_Joint">
+                    <param name="mimic">Active_Gear_Joint</param>
+                    <param name="multiplier">-1.0</param>
+                    <state_interface name="position"/>
+                </joint>
+            </xacro:if>
+
             <gpio name="iris_shutter">
                 <command_interface name="state"/>
                 <state_interface name="state"/>
