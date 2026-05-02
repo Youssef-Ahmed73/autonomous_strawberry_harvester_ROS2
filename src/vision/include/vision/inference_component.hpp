@@ -18,6 +18,7 @@ private:
   void image_callback(sensor_msgs::msg::Image::UniquePtr msg);
   
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_pub_; 
   std::unique_ptr<Ort::Session> session_;
 };
 }  // namespace vision

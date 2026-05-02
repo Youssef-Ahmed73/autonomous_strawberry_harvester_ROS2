@@ -23,14 +23,25 @@ target_link_libraries(camera_component ${OpenCV_LIBS})
 ament_target_dependencies(camera_component rclcpp rclcpp_components sensor_msgs cv_bridge)
 rclcpp_components_register_node(camera_component PLUGIN "vision::CameraComponent" EXECUTABLE camera_node)
 
-# --- Build Inference Component (COMMENTED OUT FOR NOW) ---
-# add_library(inference_component SHARED src/inference_component.cpp)
-# target_include_directories(inference_component PRIVATE
-#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#   $<INSTALL_INTERFACE:include>)
-# target_link_libraries(inference_component ${OpenCV_LIBS} onnxruntime)
-# ament_target_dependencies(inference_component rclcpp rclcpp_components sensor_msgs cv_bridge)
-# rclcpp_components_register_node(inference_component PLUGIN "vision::InferenceComponent" EXECUTABLE inference_node)
+
+# --- Find ONNX Runtime ---
+set(ONNXRUNTIME_DIR "/opt/onnxruntime/onnxruntime-linux-x64-gpu-1.17.1") 
+
+find_library(ONNXRUNTIME_LIB onnxruntime HINTS ${ONNXRUNTIME_DIR}/lib)
+if(NOT ONNXRUNTIME_LIB)
+  message(FATAL_ERROR "ONNX Runtime library not found!")
+endif()
+
+# --- Build Inference Component ---
+add_library(inference_component SHARED src/inference_component.cpp)
+target_include_directories(inference_component PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  ${ONNXRUNTIME_DIR}/include # Crucial for finding cuda_provider_factory.h
+)
+target_link_libraries(inference_component ${OpenCV_LIBS} ${ONNXRUNTIME_LIB})
+ament_target_dependencies(inference_component rclcpp rclcpp_components sensor_msgs cv_bridge)
+rclcpp_components_register_node(inference_component PLUGIN "vision::InferenceComponent" EXECUTABLE inference_node)
 
 
 # --- Build Kinect Component ---
@@ -48,6 +59,7 @@ rclcpp_components_register_node(kinect_component PLUGIN "vision::KinectComponent
 install(TARGETS 
   camera_component 
   kinect_component
+  inference_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)

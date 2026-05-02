@@ -18,7 +18,10 @@ CameraComponent::CameraComponent(const rclcpp::NodeOptions & options)
     RCLCPP_ERROR(this->get_logger(), "Failed to open video stream: %s", stream_url_.c_str());
   }
 
-  image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("image_raw", 10);
+  //image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("image_raw", 10);
+
+  rclcpp::QoS qos_profile = rclcpp::SensorDataQoS();
+  image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("image_raw", qos_profile);
 
   timer_ = this->create_wall_timer(
     std::chrono::milliseconds(33),
