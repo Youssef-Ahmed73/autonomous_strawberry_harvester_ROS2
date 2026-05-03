@@ -24,4 +24,5 @@ moveit_simple_controller_manager:
     action_ns: follow_joint_trajectory
     joints:
       - Active_Gear_Joint
+      - Door_Joint
      

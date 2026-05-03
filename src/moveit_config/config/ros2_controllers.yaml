@@ -36,6 +36,7 @@ ee_controller:
   ros__parameters:
     joints:
       - Active_Gear_Joint
+      - Door_Joint
     command_interfaces:
       - position
     state_interfaces:

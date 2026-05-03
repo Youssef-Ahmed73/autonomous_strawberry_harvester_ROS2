@@ -73,6 +73,13 @@
                 </state_interface>
             </joint>
 
+            <joint name="Door_Joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Door_Joint']}</param>
+                </state_interface>
+            </joint>            
+
             <xacro:if value="${use_gazebo}">
                 <joint name="Passive_Gear_Joint">
                     <param name="mimic">Active_Gear_Joint</param>

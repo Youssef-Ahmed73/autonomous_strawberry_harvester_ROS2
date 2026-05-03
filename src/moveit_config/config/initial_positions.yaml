@@ -1,7 +1,8 @@
 # Default initial positions for probot_anno's ros2_control fake system
 
 initial_positions:
-  Active_Gear_Joint: -0.56
+  Active_Gear_Joint: 0
+  Door_Joint: 0
   joint_1: 0
   joint_2: 0
   joint_3: 0
