@@ -14,8 +14,8 @@ def generate_launch_description():
                     package='vision',
                     plugin='vision::CameraComponent',
                     name='camera_node',
-                    #parameters=[{'stream_url': 'http://192.168.100.130:8080/video'}],
-                    parameters=[{'stream_url': 'http://10.140.187.152:8080/video'}],
+                    #parameters=[{'stream_url': 'http://10.42.0.171/stream'}], #camera 1
+                    parameters=[{'stream_url': 'http://10.42.0.161/stream'}],  #camera 2
                     extra_arguments=[{'use_intra_process_comms': True}]
                 ),
                 ComposableNode(

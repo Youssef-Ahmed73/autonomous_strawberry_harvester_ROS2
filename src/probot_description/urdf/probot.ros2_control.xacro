@@ -81,7 +81,7 @@
             </joint>            
 
             <xacro:if value="${use_gazebo}">
-                <joint name="Passive_Gear_Joint">
+                <joint name="Passive_Scissors_Gear_Joint">
                     <param name="mimic">Active_Gear_Joint</param>
                     <param name="multiplier">-1.0</param>
                     <state_interface name="position"/>
