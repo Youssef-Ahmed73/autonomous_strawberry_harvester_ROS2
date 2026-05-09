@@ -1,37 +1,73 @@
 # ashr_gazebo/config/bridge.yaml
 ---
+# ==========================================
+# Core Simulation Time
+# ==========================================
 - ros_topic_name: "/clock"
   gz_topic_name: "/clock"
   ros_type_name: "rosgraph_msgs/msg/Clock"
   gz_type_name: "ignition.msgs.Clock"
   direction: GZ_TO_ROS
 
+# ==========================================
+# Kinect Camera (RGB-D)
+# ==========================================
 - ros_topic_name: "/camera/color/image_raw"
-  gz_topic_name: "/camera/image"   
+  gz_topic_name: "/camera/kinect/image"   
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "ignition.msgs.Image"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "/camera/depth/image_raw"
-  gz_topic_name: "/camera/depth_image"
+  gz_topic_name: "/camera/kinect/depth_image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "ignition.msgs.Image"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "/camera/depth/points"
-  gz_topic_name: "/camera/points"
+  gz_topic_name: "/camera/kinect/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "ignition.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "/camera/color/camera_info"
-  gz_topic_name: "/camera/camera_info" 
+  gz_topic_name: "/camera/kinect/camera_info" 
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "ignition.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "/camera/depth/camera_info"
-  gz_topic_name: "/camera/camera_info" 
+  gz_topic_name: "/camera/kinect/camera_info" 
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "ignition.msgs.CameraInfo"
   direction: GZ_TO_ROS  
+
+# ==========================================
+# ESP Camera 1 (RGB)
+# ==========================================
+- ros_topic_name: "/camera/esp1/image_raw"
+  gz_topic_name: "/camera/esp1/image_raw"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/camera/esp1/camera_info"
+  gz_topic_name: "/camera/esp1/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "ignition.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# ==========================================
+# ESP Camera 2 (RGB)
+# ==========================================
+- ros_topic_name: "/camera/esp2/image_raw"
+  gz_topic_name: "/camera/esp2/image_raw"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/camera/esp2/camera_info"
+  gz_topic_name: "/camera/esp2/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "ignition.msgs.CameraInfo"
+  direction: GZ_TO_ROS

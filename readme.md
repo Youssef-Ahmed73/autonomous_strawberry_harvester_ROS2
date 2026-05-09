@@ -1,4 +1,4 @@
-# WELCOME TO ASHR GRADUATION PROJECT
+# WELCOME TO ASHR GRADUATION PROJECT 🍓
 
 ## About the project
 I will write this later XD

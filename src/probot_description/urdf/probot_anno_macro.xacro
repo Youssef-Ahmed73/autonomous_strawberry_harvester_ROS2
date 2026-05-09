@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:macro name="probot_anno_macro">
+  <xacro:macro name="probot_anno_macro" params="use_gazebo">
     <xacro:property name="M_PI" value="3.1415926536"/>
 
 
@@ -287,6 +287,33 @@
       <parent link="link_6" />
       <child link="tool0" />
     </joint-->
+    
+    <!-- ========================================================= -->
+    <!-- GAZEBO SENSORS: KINECT RGB-D                              -->
+    <!-- ========================================================= -->
+    <xacro:if value="${use_gazebo}">
+      <gazebo reference="camera_link2">
+        <sensor name="kinect_rgbd" type="rgbd_camera">
+          <pose>0 0 0.01 1.5708 -1.5708 0</pose>
+          <always_on>true</always_on>
+          <update_rate>30.0</update_rate>
+          <visualize>true</visualize>
+          <topic>/camera/kinect</topic>
+          <camera>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>10.0</far>
+            </clip>
+          </camera>
+        </sensor>
+      </gazebo>
+    </xacro:if>
     
     </xacro:macro>
 </robot>

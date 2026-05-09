@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:macro name="probot_gripper" params="parent">
+  <xacro:macro name="probot_gripper" params="parent use_gazebo">
 
     <!-- Standardized Gripper Materials -->
     <material name="gripper_white">
@@ -314,6 +314,58 @@
       <parent link="Container_link" />
       <child link="LED2_Link" />
     </joint>
+
+    <!-- ========================================================= -->
+    <!-- GAZEBO SENSORS: ESP CAMS                                  -->
+    <!-- ========================================================= -->
+    <xacro:if value="${use_gazebo}">
+      
+      <!-- ESP Camera 1 -->
+      <gazebo reference="esp_camera1">
+        <sensor name="esp_camera1_rgb" type="camera">
+          <pose>0 0 0.01 -1.5708 -1.5708 0</pose>
+          <always_on>true</always_on>
+          <update_rate>30.0</update_rate>
+          <visualize>true</visualize>
+          <topic>/camera/esp1/image_raw</topic>
+          <camera>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>600</width>
+              <height>800</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.01</near>
+              <far>10.0</far>
+            </clip>
+          </camera>
+        </sensor>
+      </gazebo>
+
+      <!-- ESP Camera 2 -->
+      <gazebo reference="esp_camera2">
+        <sensor name="esp_camera2_rgb" type="camera">
+          <pose>0 0 0.01 -1.5708 -1.5708 0</pose>
+          <always_on>true</always_on>
+          <update_rate>30.0</update_rate>
+          <visualize>true</visualize>
+          <topic>/camera/esp2/image_raw</topic>
+          <camera>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>600</width>
+              <height>800</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.01</near>
+              <far>10.0</far>
+            </clip>
+          </camera>
+        </sensor>
+      </gazebo>
+    </xacro:if>
 
   </xacro:macro>
 </robot>

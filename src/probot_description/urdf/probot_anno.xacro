@@ -12,9 +12,9 @@
     <xacro:include filename="$(find probot_description)/urdf/gripper_macro.xacro" />
     <xacro:include filename="$(find probot_description)/urdf/probot.ros2_control.xacro" />
 
-    <xacro:probot_anno_macro />
+    <xacro:probot_anno_macro use_gazebo="$(arg use_gazebo)" />
 
-    <xacro:probot_gripper parent="link_6" />
+    <xacro:probot_gripper parent="link_6" use_gazebo="$(arg use_gazebo)" />
 
     <xacro:probot_anno_ros2_control 
         name="ProbotSystem" 
