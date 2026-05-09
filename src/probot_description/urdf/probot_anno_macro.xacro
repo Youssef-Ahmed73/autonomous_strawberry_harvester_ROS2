@@ -4,10 +4,77 @@
   <xacro:macro name="probot_anno_macro">
     <xacro:property name="M_PI" value="3.1415926536"/>
 
+
+    <!-- Materials -->
+    <material name="offwhite">
+      <color rgba="0.95 0.95 0.92 1" />
+    </material>
+    <material name="kinect_dark">
+      <color rgba="0.15 0.15 0.15 1" /> <!-- The classic dark matte grey of the Kinect -->
+    </material>
+
+    <!-- Fix robot to world -->
     <link name="world"/>
+    <joint name="world_to_robot_base" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="world" />
+      <child link="robot_base" />
+    </joint>
+
+    <!-- New Robot Base -->
+    <link name="robot_base">
+      <inertial>
+        <origin xyz="-0.26475 0.051293 0.019346" rpy="0 0 0" />
+        <mass value="1.4191" />
+        <inertia ixx="0.012341" ixy="0.0054099" ixz="0.0023347" iyy="0.03677" iyz="-0.0018374" izz="0.047034" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/robot_base.STL" />
+        </geometry>
+      <material name="kinect_dark" /> 
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/robot_base.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Kinect optical frames -->
+    <link name="camera_link1"/>
+    <joint name="camera_joint1" type="fixed">
+      <origin xyz="-0.27393 0.13681 0.05339" rpy="-1.509 0 0" />
+      <parent link="robot_base" />
+      <child link="camera_link1" />
+    </joint>
+
+    <link name="camera_link2"/>
+    <joint name="camera_joint2" type="fixed">
+      <origin xyz="-0.32393 0.13681 0.05339" rpy="-1.509 0 0" />
+      <parent link="robot_base" />
+      <child link="camera_link2" />
+    </joint>
+
+    <link name="camera_link3"/>
+    <joint name="camera_joint3" type="fixed">
+      <origin xyz="-0.34993 0.13681 0.05339" rpy="-1.509 0 0" />
+      <parent link="robot_base" />
+      <child link="camera_link3" />
+    </joint>
+
+    <link name="base_footprint"/>
+    <joint name="robot_base_to_base_footprint" type="fixed">
+      <origin xyz="0 0 -0.017" rpy="0 0 0"/>
+      <parent link="robot_base"/>
+      <child link="base_footprint"/>
+    </joint>
+
     <joint name="joint_0" type="fixed">
       <origin xyz="0 0 0.0532" rpy="0 0 0" />
-      <parent link="world" />
+      <parent link="base_footprint" />
       <child link="base_link" />
     </joint>
 
@@ -22,16 +89,14 @@
       <visual>
         <origin xyz="0.017266 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://probot_description/meshes/base_link.STL" />
+          <mesh filename="package://probot_description/meshes/new_base_link.stl" />
         </geometry>
-        <material name="robot_color">
-          <color rgba="0.79216 0.81961 0.93333 1" />
-        </material>
+      <material name="offwhite" />
       </visual>
       <collision>
         <origin xyz="0.017266 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://probot_description/meshes/base_link.STL" />
+          <mesh filename="package://probot_description/meshes/new_base_link.stl" />
         </geometry>
       </collision>
     </link>
@@ -49,9 +114,7 @@
         <geometry>
           <mesh filename="package://probot_description/meshes/link_1.STL" />
         </geometry>
-        <material name="robot_color">
-          <color rgba="0.79216 0.81961 0.93333 1" />
-        </material>
+        <material name="offwhite" />
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -81,9 +144,7 @@
         <geometry>
           <mesh filename="package://probot_description/meshes/link_2.STL" />
         </geometry>
-        <material name="robot_color">
-          <color rgba="0.79216 0.81961 0.93333 1" />
-        </material>
+        <material name="offwhite" />
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -113,9 +174,7 @@
         <geometry>
           <mesh filename="package://probot_description/meshes/link_3.STL" />
         </geometry>
-        <material name="robot_color">
-          <color rgba="0.79216 0.81961 0.93333 1" />
-        </material>
+        <material name="offwhite" />
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -145,9 +204,7 @@
         <geometry>
           <mesh filename="package://probot_description/meshes/link_4.STL" />
         </geometry>
-        <material name="robot_color">
-          <color rgba="0.79216 0.81961 0.93333 1" />
-        </material>
+        <material name="offwhite" />
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -177,9 +234,7 @@
         <geometry>
           <mesh filename="package://probot_description/meshes/link_5.STL" />
         </geometry>
-        <material name="robot_color">
-          <color rgba="0.79216 0.81961 0.93333 1" />
-        </material>
+        <material name="offwhite" />
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -209,9 +264,7 @@
         <geometry>
           <mesh filename="package://probot_description/meshes/link_6.STL" />
         </geometry>
-        <material name="robot_color">
-          <color rgba="0.79216 0.81961 0.93333 1" />
-        </material>
+        <material name="offwhite" />
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />

@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     
     <xacro:macro name="probot_anno_ros2_control" params="name initial_positions_file use_mock_hardware use_real_hardware use_gazebo use_isaac">
-        <xacro:property name="initial_positions" value="${load_yaml(initial_positions_file)['initial_positions']}"/>
+        <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"/>
 
         <ros2_control name="${name}" type="system">
             <hardware>
@@ -28,48 +28,42 @@
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['joint_1']}</param>
                 </state_interface>
-                <!--state_interface name="velocity"/-->
             </joint>
             <joint name="joint_2">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['joint_2']}</param>
                 </state_interface>
-                <!--state_interface name="velocity"/-->
             </joint>
             <joint name="joint_3">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['joint_3']}</param>
                 </state_interface>
-                <!--state_interface name="velocity"/-->
             </joint>
             <joint name="joint_4">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['joint_4']}</param>
                 </state_interface>
-                <!--state_interface name="velocity"/-->
             </joint>
             <joint name="joint_5">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['joint_5']}</param>
                 </state_interface>
-                <!--state_interface name="velocity"/-->
             </joint>
             <joint name="joint_6">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['joint_6']}</param>
                 </state_interface>
-                <!--state_interface name="velocity"/-->
             </joint>
 
-            <joint name="Active_Gear_Joint">
+            <joint name="Active_Scissors_Gear_Joint">
                 <command_interface name="position"/>
                 <state_interface name="position">
-                  <param name="initial_value">${initial_positions['Active_Gear_Joint']}</param>
+                  <param name="initial_value">${initial_positions['Active_Scissors_Gear_Joint']}</param>
                 </state_interface>
             </joint>
 
@@ -80,19 +74,61 @@
                 </state_interface>
             </joint>            
 
-            <xacro:if value="${use_gazebo}">
-                <joint name="Passive_Scissors_Gear_Joint">
-                    <param name="mimic">Active_Gear_Joint</param>
-                    <param name="multiplier">-1.0</param>
-                    <state_interface name="position"/>
-                </joint>
-            </xacro:if>
+            <joint name="Iris_Active_Gear_Joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Iris_Active_Gear_Joint']}</param>
+                </state_interface>
+            </joint> 
 
-            <gpio name="iris_shutter">
-                <command_interface name="state"/>
-                <state_interface name="state"/>
-            </gpio>
+            <xacro:if value="${use_gazebo}">
+                <!-- Passive Scissors mimics Active Scissors -->
+                <joint name="Passive_Scissors_Gear_Joint">
+                    <param name="mimic">Active_Scissors_Gear_Joint</param>
+                    <param name="multiplier">-1.0</param>
+                    <command_interface name="position"/>
+                    <state_interface name="position">
+                        <param name="initial_value">0.0</param>
+                    </state_interface>
+                </joint>
+
+                <!-- Passive Iris Gear mimics Active Iris Gear -->
+                <joint name="Iris_Passive_Gear_Joint">
+                    <param name="mimic">Iris_Active_Gear_Joint</param>
+                    <param name="multiplier">-0.3367</param>
+                    <command_interface name="position"/>
+                    <state_interface name="position">
+                        <param name="initial_value">0.0</param>
+                    </state_interface>
+                </joint>
+
+                <!-- ALL 12 Blades mimic the Active Iris Gear DIRECTLY to avoid chain-mimic bugs -->
+                <!-- Multiplier = -0.3367 (passive gear) * 1.6 (blade to passive gear) = -0.53872 -->
+                <xacro:macro name="mimic_iris" params="num">
+                    <joint name="Iris${num}_Joint">
+                        <param name="mimic">Iris_Active_Gear_Joint</param>
+                        <param name="multiplier">-0.53872</param>
+                        <command_interface name="position"/>
+                        <state_interface name="position">
+                            <param name="initial_value">0.0</param>
+                        </state_interface>
+                    </joint>
+                </xacro:macro>
+                
+                <xacro:mimic_iris num="1"/>
+                <xacro:mimic_iris num="2"/>
+                <xacro:mimic_iris num="3"/>
+                <xacro:mimic_iris num="4"/>
+                <xacro:mimic_iris num="5"/>
+                <xacro:mimic_iris num="6"/>
+                <xacro:mimic_iris num="7"/>
+                <xacro:mimic_iris num="8"/>
+                <xacro:mimic_iris num="9"/>
+                <xacro:mimic_iris num="10"/>
+                <xacro:mimic_iris num="11"/>
+                <xacro:mimic_iris num="12"/>
+            </xacro:if>
             
-            </ros2_control>
+        </ros2_control>
     </xacro:macro>
 </robot>

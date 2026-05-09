@@ -121,7 +121,7 @@ def generate_launch_description():
     spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
-        arguments=['-topic', 'robot_description', '-name', 'probot_anno', '-z', '0.1'],
+        arguments=['-topic', 'robot_description', '-name', 'probot_anno', '-z', '0.017'],
         output='screen',
         condition=IfCondition(use_gazebo)
     )

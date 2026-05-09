@@ -35,16 +35,11 @@ arm_controller:
 ee_controller:
   ros__parameters:
     joints:
-      - Active_Gear_Joint
+      - Active_Scissors_Gear_Joint
       - Door_Joint
+      - Iris_Active_Gear_Joint
     command_interfaces:
       - position
     state_interfaces:
       - position
 #      - velocity
-
-iris_controller:
-  ros__parameters:
-    joints:
-      - iris_shutter
-    interface_name: state

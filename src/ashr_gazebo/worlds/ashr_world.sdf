@@ -69,61 +69,6 @@
       <pose>0 0 0 0 -0 0</pose>
       <self_collide>false</self_collide>
     </model>
-    <model name='kinect'>
-      <link name='link'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <!--uri>file:///home/youssef/Documents/gazebo_kinect/kinect.dae</uri-->
-              <uri>model://ashr_gazebo/meshes/kinect.dae</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <!--uri>file:///home/youssef/Documents/gazebo_kinect/kinect.dae</uri-->
-              <uri>model://ashr_gazebo/meshes/kinect.dae</uri>
-            </mesh>
-          </geometry>
-        </collision>
-        <pose>0 0 0 0 -0 0</pose>
-        <inertial>
-          <pose>0 0 0 0 -0 0</pose>
-          <mass>1</mass>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-
-        <sensor name="kinect_rgbd" type="rgbd_camera">
-          <topic>camera</topic>
-          <update_rate>30</update_rate>
-          <always_on>true</always_on>
-          <camera>
-            <horizontal_fov>1.047</horizontal_fov>
-            <image>
-              <width>640</width>
-              <height>480</height>
-            </image>
-            <clip>
-              <near>0.1</near>
-              <far>10.0</far>
-            </clip>
-          </camera>
-        </sensor>
-
-        <enable_wind>false</enable_wind>
-      </link>
-      <pose>-0.026194 -0.3355 0.052501 0 0.000119 -0</pose>
-      <static>true</static>
-      <self_collide>false</self_collide>
-    </model>
     <light name='sun' type='directional'>
       <pose>0 0 10 0 -0 0</pose>
       <cast_shadows>true</cast_shadows>

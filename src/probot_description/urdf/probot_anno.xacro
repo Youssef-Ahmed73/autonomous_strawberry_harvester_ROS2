@@ -9,7 +9,7 @@
     <xacro:arg name="use_isaac" default="false" />
 
     <xacro:include filename="$(find probot_description)/urdf/probot_anno_macro.xacro" />
-    <xacro:include filename="$(find probot_description)/urdf/new_gripper_macro.xacro" />
+    <xacro:include filename="$(find probot_description)/urdf/gripper_macro.xacro" />
     <xacro:include filename="$(find probot_description)/urdf/probot.ros2_control.xacro" />
 
     <xacro:probot_anno_macro />

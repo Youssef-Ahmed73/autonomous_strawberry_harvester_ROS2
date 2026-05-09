@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="probot_gripper" params="parent">
+
+    <!-- Standardized Gripper Materials -->
+    <material name="gripper_white">
+      <color rgba="1 1 1 1" />
+    </material>
+    <material name="gripper_blue">
+      <color rgba="0.094118 0.30196 0.77647 1" />
+    </material>
+    <material name="gripper_body">
+      <color rgba="0.79216 0.81961 0.93333 1" />
+    </material>
+
+    <!-- Attachment joint to Link_6 -->
+    <joint name="arm_gripper_joint" type="fixed">
+      <origin xyz="0 -0.013 0" rpy="1.5708 0 0" />
+      <parent link="${parent}" />
+      <child link="Container_link" />
+    </joint>
+
+    <!-- Main Container -->
+    <link name="Container_link">
+      <inertial>
+        <origin xyz="-0.007738 0.003131 0.081807" rpy="0 0 0" />
+        <mass value="0.57288" />
+        <inertia ixx="0.0024146" ixy="-0.00017007" ixz="-1.9739E-05" iyy="0.0023925" iyz="7.7694E-05" izz="0.0020505" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Container_link.STL" />
+        </geometry>
+        <material name="gripper_white" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Container_link.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Door -->
+    <link name="Door_Link">
+      <inertial>
+        <origin xyz="0.079847 -0.042299 0.026388" rpy="0 0 0" />
+        <mass value="0.072634" />
+        <inertia ixx="9.2526E-05" ixy="5.1964E-05" ixz="-6.1919E-06" iyy="7.7534E-05" iyz="2.6661E-06" izz="0.00012337" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Door_Link.STL" />
+        </geometry>
+        <material name="gripper_white" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Door_Link.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="Door_Joint" type="revolute">
+      <origin xyz="-0.0325765613470637 -0.0827398002739313 0.0809999999999903" rpy="-3.14159265358979 0 0" />
+      <parent link="Container_link" />
+      <child link="Door_Link" />
+      <axis xyz="0 0 -1" />
+      <limit lower="-3.14" upper="0" effort="10" velocity="6.26" />
+    </joint>
+
+    <!-- Active Scissors System -->
+    <link name="Active_Scissors_Gear_Link">
+      <inertial>
+        <origin xyz="0.0013957 -0.0014497 0.0028995" rpy="0 0 0" />
+        <mass value="0.0028486" />
+        <inertia ixx="1.8787E-07" ixy="5.3502E-08" ixz="-3.0229E-09" iyy="1.8466E-07" iyz="3.0861E-09" izz="3.6285E-07" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Active_Scissors_Gear_Link.STL" />
+        </geometry>
+        <material name="gripper_blue" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Active_Scissors_Gear_Link.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="Active_Scissors_Gear_Joint" type="revolute">
+      <origin xyz="0.0116745834389464 -0.0551236385761704 0.122199999999998" rpy="0 0 0" />
+      <parent link="Container_link" />
+      <child link="Active_Scissors_Gear_Link" />
+      <axis xyz="0 0 -1" />
+      <limit lower="0" upper="0.5" effort="10" velocity="6.28" />
+    </joint>
+
+    <link name="Active_Blade_Link">
+      <inertial>
+        <origin xyz="-0.00876871024480015 0.0311631307249487 0.00193034918440163" rpy="0 0 0" />
+        <mass value="0.00120822711123095" />
+        <inertia ixx="6.98348086660056E-07" ixy="2.41232682980469E-07" ixz="-2.3592171209022E-09" iyy="9.13337738958124E-08" iyz="6.93196770741286E-09" izz="7.86989865387403E-07" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Active_Blade_Link.STL" />
+        </geometry>
+        <material name="gripper_body" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Active_Blade_Link.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="Active_Blade_Joint" type="fixed">
+      <origin xyz="0.0136451186878765 -0.0139305684016784 0.00689999999999995" rpy="0 0 0" />
+      <parent link="Active_Scissors_Gear_Link" />
+      <child link="Active_Blade_Link" />
+    </joint>
+
+    <!-- Passive Scissors System -->
+    <link name="Passive_Scissors_Gear_Link">
+      <inertial>
+        <origin xyz="0.00040984 -0.003076 0.0022713" rpy="0 0 0" />
+        <mass value="0.0032079" />
+        <inertia ixx="2.8043E-07" ixy="1.9421E-08" ixz="-1.8444E-09" iyy="1.3877E-07" iyz="1.3404E-08" izz="4.0476E-07" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Passive_Scissors_Gear_Link.STL" />
+        </geometry>
+        <material name="gripper_blue" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Passive_Scissors_Gear_Link.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="Passive_Scissors_Gear_Joint" type="revolute">
+      <origin xyz="0.0356480493609751 -0.0439561747779156 0.1231" rpy="0 0 0" />
+      <parent link="Container_link" />
+      <child link="Passive_Scissors_Gear_Link" />
+      <axis xyz="0 0 -1" />
+      <limit lower="-6.28" upper="6.28" effort="10" velocity="6.28" />
+      <mimic joint="Active_Scissors_Gear_Joint" multiplier="-1" offset="0" />
+    </joint>
+
+    <link name="Passive_Blade_Link">
+      <inertial>
+        <origin xyz="-0.017306 0.027376 0.0019297" rpy="0 0 0" />
+        <mass value="0.0012073" />
+        <inertia ixx="6.0259E-07" ixy="3.2705E-07" ixz="-3.5679E-09" iyy="1.8677E-07" iyz="6.3783E-09" izz="7.8667E-07" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Passive_Blade_Link.STL" />
+        </geometry>
+        <material name="gripper_body" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Passive_Blade_Link.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="Passive_Blade_Joint" type="fixed">
+      <origin xyz="0.00264443875986524 -0.0193198587894807 0.00720000000000001" rpy="0 0 0" />
+      <parent link="Passive_Scissors_Gear_Link" />
+      <child link="Passive_Blade_Link" />
+    </joint>
+
+    <!-- NEW Iris System -->
+    <link name="Iris_Active_Gear_Link">
+      <inertial>
+        <origin xyz="-0.0004109 0.00041447 -0.0031643" rpy="0 0 0" />
+        <mass value="0.0055356" />
+        <inertia ixx="6.0526E-07" ixy="-2.272E-08" ixz="-2.2038E-09" iyy="6.057E-07" iyz="2.2229E-09" izz="1.1903E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Iris_Active_Gear_Link.STL" />
+        </geometry>
+        <material name="gripper_blue" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Iris_Active_Gear_Link.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="Iris_Active_Gear_Joint" type="revolute">
+      <origin xyz="0.0799093458453353 0.0121608340345881 0.14234666667" rpy="-3.14159265358979 0 0" />
+      <parent link="Container_link" />
+      <child link="Iris_Active_Gear_Link" />
+      <axis xyz="0 0 1" />
+      <limit lower="0.0" upper="1.57" effort="10" velocity="6.28" />
+    </joint>
+
+    <link name="Iris_Passive_Gear_Link">
+      <inertial>
+        <origin xyz="0.0020485 0.00029915 0.0015558" rpy="0 0 0" />
+        <mass value="0.020685" />
+        <inertia ixx="2.3364E-05" ixy="-2.5397E-07" ixz="-5.6861E-21" iyy="2.5066E-05" iyz="3.9617E-20" izz="4.8396E-05" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Iris_Passive_Gear_Link.STL" />
+        </geometry>
+        <material name="gripper_white" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://probot_description/meshes/Iris_Passive_Gear_Link.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="Iris_Passive_Gear_Joint" type="revolute">
+      <origin xyz="0 0 0.144801833336666" rpy="0 0 0" />
+      <parent link="Container_link" />
+      <child link="Iris_Passive_Gear_Link" />
+      <axis xyz="0 0 -1" />
+      <limit lower="-3.14" upper="3.14" effort="10" velocity="6.28" />
+      <mimic joint="Iris_Active_Gear_Joint" multiplier="-0.3367" offset="0" />
+    </joint>
+
+    <!-- The 12 Iris Blades (Xacro macro for repetitive iris blades) -->
+    <xacro:macro name="iris_blade" params="num xyz rpy mass origin_xyz ixx ixy ixz iyy iyz izz mimic_joint multiplier">
+      <link name="Iris${num}_Link">
+        <inertial>
+          <origin xyz="${origin_xyz}" rpy="0 0 0" />
+          <mass value="${mass}" />
+          <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}" />
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://probot_description/meshes/Iris${num}_Link.STL" />
+          </geometry>
+          <material name="gripper_blue" />
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://probot_description/meshes/Iris${num}_Link.STL" />
+          </geometry>
+        </collision>
+      </link>
+      <joint name="Iris${num}_Joint" type="revolute">
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <parent link="Iris_Passive_Gear_Link" />
+        <child link="Iris${num}_Link" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="10" velocity="6.28" />
+        <mimic joint="${mimic_joint}" multiplier="${multiplier}" offset="0" />
+      </joint>
+    </xacro:macro>
+
+    <xacro:iris_blade num="1" xyz="0.0326097658681697 0.0257615349190274 0" rpy="-3.14159265358979 0 3.14159265358979" mass="0.00193549938309683" origin_xyz="0.0123168506307957 -0.010323478737693 -0.000857619665064174" ixx="1.74887754763572E-07" ixy="1.5772663379958E-07" ixz="5.21732779151219E-08" iyy="2.91567386136741E-07" iyz="-3.86173848863187E-08" izz="4.0210073932324E-07" mimic_joint="Iris_Passive_Gear_Joint" multiplier="1.6"/>
+    <xacro:iris_blade num="2" xyz="0.0411216531128113 0.0060052607462728 0" rpy="3.14159265358979 0 0" mass="0.00193549941167017" origin_xyz="-0.0158284449856681 0.00278196952962637 -0.000857619755370576" ixx="6.74623909855893E-08" ixy="2.83395528279417E-08" ixz="-6.44920774355567E-08" iyy="3.98992752233588E-07" iyz="7.35699742033941E-09" izz="4.02100738833512E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="3" xyz="0.0386150266144425 -0.0153601181937839 0" rpy="-3.14159265358979 0 3.14159265358979" mass="0.0019355" origin_xyz="0.015099 0.005505 -0.00085762" ixx="1.258E-07" ixy="-1.2939E-07" ixz="5.953E-08" iyy="3.4065E-07" iyz="2.5875E-08" izz="4.021E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="4" xyz="0.0257615349190274 -0.0326097658681697 0" rpy="3.14159265358979 0 0" mass="0.00193549938309683" origin_xyz="-0.0103234787376935 -0.0123168506307958 -0.000857619665064147" ixx="2.91567386136742E-07" ixy="-1.57726633799579E-07" ixz="-3.86173848863183E-08" iyy="1.74887754763571E-07" iyz="-5.21732779151217E-08" izz="4.0210073932324E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="5" xyz="0.00600526074627281 -0.0411216531128113 0" rpy="-3.14159265358979 0 3.14159265358979" mass="0.0019355" origin_xyz="0.002782 0.015828 -0.00085762" ixx="3.9899E-07" ixy="-2.834E-08" ixz="7.357E-09" iyy="6.7462E-08" iyz="6.4492E-08" izz="4.021E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="6" xyz="-0.0153601181937839 -0.0386150266144425 0" rpy="3.14159265358979 0 0" mass="0.00193549939775868" origin_xyz="0.00550496616958923 -0.0150988202149194 -0.000857619711433583" ixx="3.40652937863127E-07" ixy="1.2938707802273E-07" ixz="2.58746916068284E-08" iyy="1.25802205036768E-07" iyz="-5.95302759891289E-08" izz="4.02100739880777E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="7" xyz="-0.0326097658681697 -0.0257615349190274 0" rpy="3.14159265358979 0 0" mass="0.0019355" origin_xyz="0.012317 -0.010323 -0.00085762" ixx="1.7489E-07" ixy="1.5773E-07" ixz="5.2173E-08" iyy="2.9157E-07" iyz="-3.8617E-08" izz="4.021E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="8" xyz="-0.0411216531128113 -0.00600526074627281 0" rpy="-3.14159265358979 0 3.14159265358979" mass="0.00193549941167017" origin_xyz="-0.0158284449856679 0.00278196952962714 -0.000857619755370603" ixx="6.74623909855889E-08" ixy="2.83395528279398E-08" ixz="-6.44920774355568E-08" iyy="3.98992752233588E-07" iyz="7.35699742033891E-09" izz="4.02100738833511E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="9" xyz="-0.0386150266144425 0.0153601181937839 0" rpy="3.14159265358979 0 0" mass="0.0019355" origin_xyz="0.015099 0.005505 -0.00085762" ixx="1.258E-07" ixy="-1.2939E-07" ixz="5.953E-08" iyy="3.4065E-07" iyz="2.5875E-08" izz="4.021E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="10" xyz="-0.0257615349190274 0.0326097658681697 0" rpy="3.14159265358979 0 0" mass="0.00193549938309683" origin_xyz="0.0103234787376935 0.0123168506307951 -0.000857619665064174" ixx="2.91567386136745E-07" ixy="-1.57726633799579E-07" ixz="3.86173848863182E-08" iyy="1.74887754763569E-07" iyz="5.21732779151223E-08" izz="4.0210073932324E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="11" xyz="-0.00600526074627281 0.0411216531128113 0" rpy="3.14159265358979 0 0" mass="0.00193549941167016" origin_xyz="0.00278196952962685 0.0158284449856677 -0.000857619755370576" ixx="3.98992752233588E-07" ixy="-2.83395528279387E-08" ixz="7.35699742033876E-09" iyy="6.74623909855888E-08" iyz="6.44920774355571E-08" izz="4.02100738833512E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+    <xacro:iris_blade num="12" xyz="0.0153601181937839 0.0386150266144425 0" rpy="3.14159265358979 0 0" mass="0.0019355" origin_xyz="-0.005505 0.015099 -0.00085762" ixx="3.4065E-07" ixy="1.2939E-07" ixz="-2.5875E-08" iyy="1.258E-07" iyz="5.953E-08" izz="4.021E-07" mimic_joint="Iris1_Joint" multiplier="1"/>
+
+    <!-- ESP Cameras & LEDs -->
+    <link name="esp_camera1" />
+    <joint name="esp_camera1_joint" type="fixed">
+      <origin xyz="-0.0323689860368106 -0.0409983791388274 0.1035" rpy="1.5707963267949 0 2.47327551826551" />
+      <parent link="Container_link" />
+      <child link="esp_camera1" />
+    </joint>
+
+    <link name="esp_camera2" />
+    <joint name="esp_camera2_joint" type="fixed">
+      <origin xyz="0.0323689860368107 0.0409983791388273 0.1035" rpy="1.5707963267949 0 -0.668317135324279" />
+      <parent link="Container_link" />
+      <child link="esp_camera2" />
+    </joint>
+
+    <link name="LED1_Link" />
+    <joint name="LED1_Joint" type="fixed">
+      <origin xyz="-0.0358630091313028 -0.00313760673891554 0.1199" rpy="-1.5707963267949 0 -1.48352986419519" />
+      <parent link="Container_link" />
+      <child link="LED1_Link" />
+    </joint>
+
+    <link name="LED2_Link" />
+    <joint name="LED2_Joint" type="fixed">
+      <origin xyz="0.0357752156926042 0.00307731396636012 0.1199" rpy="1.5707963267949 0 -1.48498761991894" />
+      <parent link="Container_link" />
+      <child link="LED2_Link" />
+    </joint>
+
+  </xacro:macro>
+</robot>

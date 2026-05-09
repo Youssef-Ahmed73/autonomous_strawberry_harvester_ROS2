@@ -23,6 +23,7 @@ moveit_simple_controller_manager:
     type: FollowJointTrajectory
     action_ns: follow_joint_trajectory
     joints:
-      - Active_Gear_Joint
+      - Active_Scissors_Gear_Joint
+      - Iris_Active_Gear_Joint
       - Door_Joint
      

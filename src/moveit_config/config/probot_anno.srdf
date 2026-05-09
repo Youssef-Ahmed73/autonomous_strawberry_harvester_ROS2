@@ -15,7 +15,8 @@
     </group>
 
     <group name="ee">
-        <joint name="Active_Gear_Joint"/>
+        <joint name="Active_Scissors_Gear_Joint"/>
+        <joint name="Iris_Active_Gear_Joint"/>
         <joint name="Door_Joint"/>        
     </group>
 
@@ -30,23 +31,37 @@
     </group_state>
 
     <group_state name="scissor closed" group="ee">
-        <joint name="Active_Gear_Joint" value="0.0"/>
+        <joint name="Active_Scissors_Gear_Joint" value="0.0"/>
+        <joint name="Iris_Active_Gear_Joint" value="0.0"/>
         <joint name="Door_Joint" value="0.0"/>
     </group_state>
 
     <group_state name="scissor opened" group="ee">
-        <joint name="Active_Gear_Joint" value="0.56"/>
+        <joint name="Active_Scissors_Gear_Joint" value="0.5"/>
+        <joint name="Iris_Active_Gear_Joint" value="0.0"/>
         <joint name="Door_Joint" value="0.0"/>
     </group_state>
 
     <group_state name="door opened" group="ee">
-        <joint name="Active_Gear_Joint" value="0.0"/>
-        <joint name="Door_Joint" value="1.57"/>
+        <joint name="Active_Scissors_Gear_Joint" value="0.0"/>
+        <joint name="Iris_Active_Gear_Joint" value="0.0"/>
+        <joint name="Door_Joint" value="-1.57"/>
     </group_state>
 
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <!--end_effector name="gripper" parent_link="tool0" group="ee" parent_group="arm"/-->
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    
+    <!-- Base and Environment Fixations -->
+    <disable_collisions link1="robot_base" link2="base_footprint" reason="Adjacent"/>
+    <disable_collisions link1="robot_base" link2="base_link" reason="Never"/>
+    <disable_collisions link1="robot_base" link2="link_1" reason="Never"/>
+    <disable_collisions link1="robot_base" link2="link_2" reason="Never"/>
+    <disable_collisions link1="robot_base" link2="camera_link1" reason="Adjacent"/>
+    <disable_collisions link1="robot_base" link2="camera_link2" reason="Adjacent"/>
+    <disable_collisions link1="robot_base" link2="camera_link3" reason="Adjacent"/>
+
+    <!-- Arm Links -->
     <disable_collisions link1="base_link" link2="link_1" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="link_2" reason="Never"/>
     <disable_collisions link1="link_1" link2="link_2" reason="Adjacent"/>
@@ -62,45 +77,194 @@
     <disable_collisions link1="link_4" link2="link_6" reason="Never"/>
     <disable_collisions link1="link_5" link2="link_6" reason="Adjacent"/>
 
+    <!-- Arm to Main Container -->
+    <disable_collisions link1="link_6" link2="Container_link" reason="Adjacent"/>
+    <disable_collisions link1="link_5" link2="Container_link" reason="Never"/>
+    <disable_collisions link1="link_4" link2="Container_link" reason="Never"/>
 
-
-    <!-- Arm to Gripper Base -->
-    <disable_collisions link1="link_6" link2="gripper_base" reason="Adjacent"/>
-    <disable_collisions link1="link_5" link2="gripper_base" reason="Never"/>
-    <disable_collisions link1="link_4" link2="gripper_base" reason="Never"/>
-
-    <!-- Arm to Gripper Internals -->
-    <disable_collisions link1="link_6" link2="Active_Gear_Link" reason="Never"/>
-    <disable_collisions link1="link_6" link2="Passive_Gear_Link" reason="Never"/>
+    <!-- Arm to Tooling Components -->
+    <disable_collisions link1="link_6" link2="Active_Scissors_Gear_Link" reason="Never"/>
+    <disable_collisions link1="link_6" link2="Passive_Scissors_Gear_Link" reason="Never"/>
     <disable_collisions link1="link_6" link2="Active_Blade_Link" reason="Never"/>
     <disable_collisions link1="link_6" link2="Passive_Blade_Link" reason="Never"/>
     <disable_collisions link1="link_6" link2="Door_Link" reason="Never"/>
     <disable_collisions link1="link_5" link2="Door_Link" reason="Never"/>
     <disable_collisions link1="link_4" link2="Door_Link" reason="Never"/>
+    <disable_collisions link1="link_6" link2="Iris_Active_Gear_Link" reason="Never"/>
+    <disable_collisions link1="link_6" link2="Iris_Passive_Gear_Link" reason="Never"/>
     
-    <!-- Gripper Base to Immediate Children (Adjacent) -->
-    <disable_collisions link1="gripper_base" link2="Active_Gear_Link" reason="Adjacent"/>
-    <disable_collisions link1="gripper_base" link2="Passive_Gear_Link" reason="Adjacent"/>
-    <disable_collisions link1="gripper_base" link2="Door_Link" reason="Adjacent"/>
+    <!-- Container Base to Immediate Children (Adjacent) -->
+    <disable_collisions link1="Container_link" link2="Active_Scissors_Gear_Link" reason="Adjacent"/>
+    <disable_collisions link1="Container_link" link2="Passive_Scissors_Gear_Link" reason="Adjacent"/>
+    <disable_collisions link1="Container_link" link2="Door_Link" reason="Adjacent"/>
+    <disable_collisions link1="Container_link" link2="Iris_Active_Gear_Link" reason="Adjacent"/>
+    <disable_collisions link1="Container_link" link2="Iris_Passive_Gear_Link" reason="Adjacent"/>
+    <disable_collisions link1="Container_link" link2="esp_camera1" reason="Adjacent"/>
+    <disable_collisions link1="Container_link" link2="esp_camera2" reason="Adjacent"/>
+    <disable_collisions link1="Container_link" link2="LED1_Link" reason="Adjacent"/>
+    <disable_collisions link1="Container_link" link2="LED2_Link" reason="Adjacent"/>
 
-    <!-- Gears to Blades (Adjacent) -->
-    <disable_collisions link1="Active_Gear_Link" link2="Active_Blade_Link" reason="Adjacent"/>
-    <disable_collisions link1="Passive_Gear_Link" link2="Passive_Blade_Link" reason="Adjacent"/>
+    <!-- Container to Distant Tooling -->
+    <disable_collisions link1="Container_link" link2="Active_Blade_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Passive_Blade_Link" reason="Never"/>
 
-    <!-- Gripper Base to Distant Children -->
-    <disable_collisions link1="gripper_base" link2="Active_Blade_Link" reason="Never"/>
-    <disable_collisions link1="gripper_base" link2="Passive_Blade_Link" reason="Never"/>
-
-    <!-- Internal Gripper Cross-Collisions -->
-    <disable_collisions link1="Active_Gear_Link" link2="Passive_Gear_Link" reason="Never"/>
+    <!-- Scissors Mechanism Cross-Collisions -->
+    <disable_collisions link1="Active_Scissors_Gear_Link" link2="Active_Blade_Link" reason="Adjacent"/>
+    <disable_collisions link1="Passive_Scissors_Gear_Link" link2="Passive_Blade_Link" reason="Adjacent"/>
+    <disable_collisions link1="Active_Scissors_Gear_Link" link2="Passive_Scissors_Gear_Link" reason="Never"/>
     <disable_collisions link1="Active_Blade_Link" link2="Passive_Blade_Link" reason="Never"/>
-    <disable_collisions link1="Active_Gear_Link" link2="Passive_Blade_Link" reason="Never"/>
-    <disable_collisions link1="Passive_Gear_Link" link2="Active_Blade_Link" reason="Never"/>
+    <disable_collisions link1="Active_Scissors_Gear_Link" link2="Passive_Blade_Link" reason="Never"/>
+    <disable_collisions link1="Passive_Scissors_Gear_Link" link2="Active_Blade_Link" reason="Never"/>
 
-    <!-- Door to Internal Components -->
-    <disable_collisions link1="Door_Link" link2="Active_Gear_Link" reason="Never"/>
-    <disable_collisions link1="Door_Link" link2="Passive_Gear_Link" reason="Never"/>
+    <!-- Door to Tooling Mechanisms -->
+    <disable_collisions link1="Door_Link" link2="Active_Scissors_Gear_Link" reason="Never"/>
+    <disable_collisions link1="Door_Link" link2="Passive_Scissors_Gear_Link" reason="Never"/>
     <disable_collisions link1="Door_Link" link2="Active_Blade_Link" reason="Never"/>
     <disable_collisions link1="Door_Link" link2="Passive_Blade_Link" reason="Never"/>
+    <disable_collisions link1="Door_Link" link2="Iris_Active_Gear_Link" reason="Never"/>
+    <disable_collisions link1="Door_Link" link2="Iris_Passive_Gear_Link" reason="Never"/>
+
+    <!-- Iris Mechanism Inter-Collisions -->
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris_Passive_Gear_Link" reason="Never"/>
+    
+    <!-- Link Container to all Iris Blades -->
+    <disable_collisions link1="Container_link" link2="Iris1_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris2_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris3_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris4_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris5_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris6_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris7_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Container_link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Link Iris Passive Gear to all Iris Blades (Adjacent) -->
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris1_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris2_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris3_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris4_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris5_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris6_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris7_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris8_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris9_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris10_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris11_Link" reason="Adjacent"/>
+    <disable_collisions link1="Iris_Passive_Gear_Link" link2="Iris12_Link" reason="Adjacent"/>
+
+    <!-- Link Iris Active Gear to all Iris Blades (Never) -->
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris1_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris2_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris3_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris4_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris5_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris6_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris7_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris_Active_Gear_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- ========================================================= -->
+    <!-- FULL IRIS INTER-BLADE COLLISION MATRIX (66 Pairs)         -->
+    <!-- ========================================================= -->
+    
+    <!-- Iris 1 against all others -->
+    <disable_collisions link1="Iris1_Link" link2="Iris2_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris3_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris4_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris5_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris6_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris7_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris1_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 2 against remaining -->
+    <disable_collisions link1="Iris2_Link" link2="Iris3_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris4_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris5_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris6_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris7_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris2_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 3 against remaining -->
+    <disable_collisions link1="Iris3_Link" link2="Iris4_Link" reason="Never"/>
+    <disable_collisions link1="Iris3_Link" link2="Iris5_Link" reason="Never"/>
+    <disable_collisions link1="Iris3_Link" link2="Iris6_Link" reason="Never"/>
+    <disable_collisions link1="Iris3_Link" link2="Iris7_Link" reason="Never"/>
+    <disable_collisions link1="Iris3_Link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Iris3_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris3_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris3_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris3_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 4 against remaining -->
+    <disable_collisions link1="Iris4_Link" link2="Iris5_Link" reason="Never"/>
+    <disable_collisions link1="Iris4_Link" link2="Iris6_Link" reason="Never"/>
+    <disable_collisions link1="Iris4_Link" link2="Iris7_Link" reason="Never"/>
+    <disable_collisions link1="Iris4_Link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Iris4_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris4_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris4_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris4_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 5 against remaining -->
+    <disable_collisions link1="Iris5_Link" link2="Iris6_Link" reason="Never"/>
+    <disable_collisions link1="Iris5_Link" link2="Iris7_Link" reason="Never"/>
+    <disable_collisions link1="Iris5_Link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Iris5_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris5_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris5_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris5_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 6 against remaining -->
+    <disable_collisions link1="Iris6_Link" link2="Iris7_Link" reason="Never"/>
+    <disable_collisions link1="Iris6_Link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Iris6_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris6_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris6_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris6_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 7 against remaining -->
+    <disable_collisions link1="Iris7_Link" link2="Iris8_Link" reason="Never"/>
+    <disable_collisions link1="Iris7_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris7_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris7_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris7_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 8 against remaining -->
+    <disable_collisions link1="Iris8_Link" link2="Iris9_Link" reason="Never"/>
+    <disable_collisions link1="Iris8_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris8_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris8_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 9 against remaining -->
+    <disable_collisions link1="Iris9_Link" link2="Iris10_Link" reason="Never"/>
+    <disable_collisions link1="Iris9_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris9_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 10 against remaining -->
+    <disable_collisions link1="Iris10_Link" link2="Iris11_Link" reason="Never"/>
+    <disable_collisions link1="Iris10_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Iris 11 against remaining -->
+    <disable_collisions link1="Iris11_Link" link2="Iris12_Link" reason="Never"/>
+
+    <!-- Cross-system collisions (Scissors vs Iris) -->
+    <disable_collisions link1="Active_Scissors_Gear_Link" link2="Iris_Active_Gear_Link" reason="Never"/>
+    <disable_collisions link1="Active_Scissors_Gear_Link" link2="Iris_Passive_Gear_Link" reason="Never"/>
+    <disable_collisions link1="Passive_Scissors_Gear_Link" link2="Iris_Active_Gear_Link" reason="Never"/>
+    <disable_collisions link1="Passive_Scissors_Gear_Link" link2="Iris_Passive_Gear_Link" reason="Never"/>
 
 </robot>
