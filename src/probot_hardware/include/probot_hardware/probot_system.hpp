@@ -10,10 +10,33 @@
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "std_msgs/msg/int8_multi_array.hpp" // CHANGED TO INT8
+#include "std_msgs/msg/int16_multi_array.hpp" 
 
 namespace probot_hardware
 {
+
+// =======================================================
+// DYNAMIC SERVO MAPPING MACROS
+// Configure specific physical limits for each joint
+// =======================================================
+
+// 1. Active Scissors
+#define SCISSORS_URDF_MIN 0.0
+#define SCISSORS_URDF_MAX 0.5
+#define SCISSORS_PHYS_MIN 0.0    // Physical Servo degree for URDF Min
+#define SCISSORS_PHYS_MAX 180.0  // Physical Servo degree for URDF Max
+
+// 2. Door
+#define DOOR_URDF_MIN -3.14
+#define DOOR_URDF_MAX 0.0
+#define DOOR_PHYS_MIN 180        // Physical Servo degree for URDF Min (-3.14)
+#define DOOR_PHYS_MAX 0      // Physical Servo degree for URDF Max (0.0)
+
+// 3. Active Iris
+#define IRIS_URDF_MIN 0.0
+#define IRIS_URDF_MAX 1.57
+#define IRIS_PHYS_MIN 0.0        // Physical Servo degree for URDF Min
+#define IRIS_PHYS_MAX 180.0      // Physical Servo degree for URDF Max
 
 class ProbotSystemHardware : public hardware_interface::SystemInterface
 {
@@ -41,8 +64,9 @@ private:
   std::vector<double> hw_states_;
 
   std::shared_ptr<rclcpp::Node> node_;
-  // CHANGED TO INT8
-  rclcpp::Publisher<std_msgs::msg::Int8MultiArray>::SharedPtr publisher_; 
+  
+  rclcpp::Publisher<std_msgs::msg::Int16MultiArray>::SharedPtr publisher_arm_; 
+  rclcpp::Publisher<std_msgs::msg::Int16MultiArray>::SharedPtr publisher_ee_; 
 };
 
 }  // namespace probot_hardware

@@ -134,33 +134,6 @@ def generate_launch_description():
         condition=IfCondition(use_gazebo)
     )
 
-    # #World to Kinect Base 
-    # kinect_base_tf = Node(
-    #     package='tf2_ros',
-    #     executable='static_transform_publisher',
-    #     name='kinect_base_tf',
-    #     # x y z yaw pitch roll
-    #     arguments=['-0.026194', '-0.3355', '0.052501', '0', '0.000119', '0', 'world', 'camera_link'],
-    #     condition=IfCondition(use_gazebo)
-    # )
-
-    # #Kinect Base to RGB Frame
-    # kinect_rgb_tf = Node(
-    #     package='tf2_ros',
-    #     executable='static_transform_publisher',
-    #     name='kinect_rgb_tf',
-    #     arguments=['0', '-0.012', '0', '0', '0', '0', 'camera_link', 'camera_rgb_frame'],
-    #     condition=IfCondition(use_gazebo)
-    # )
-
-    # #RGB Frame to Optical Frame
-    # kinect_optical_tf = Node(
-    #     package='tf2_ros',
-    #     executable='static_transform_publisher',
-    #     name='kinect_optical_tf',
-    #     arguments=['0', '0', '0', '-1.5707', '0', '-1.5707', 'camera_rgb_frame', 'kinect/link/kinect_rgbd'], # <--- Changed :: to /
-    #     condition=IfCondition(use_gazebo)
-    # )
 
     # ---------------------------------------------------------
     # 7. Controller Spawners
@@ -207,9 +180,6 @@ def generate_launch_description():
         gazebo,
         spawn_entity,
         gz_bridge,
-        # kinect_base_tf,     
-        # kinect_rgb_tf,      
-        # kinect_optical_tf,  
 
         # Controller Spawners
         joint_state_broadcaster_spawner,
