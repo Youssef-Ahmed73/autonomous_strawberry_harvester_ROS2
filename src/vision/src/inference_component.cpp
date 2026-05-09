@@ -1,11 +1,12 @@
-#include "vision/inference_component.hpp"
+#include "vision/inference_component.hpp" // Inherits rclcpp, Image, Detection2DArray, and ONNX
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/dnn.hpp>
-#include <opencv2/imgproc.hpp> // Needed for cv::resize and cv::addWeighted
-#include <onnxruntime_cxx_api.h>
+#include <opencv2/imgproc.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <algorithm> 
 #include <exception>
+#include <vision_msgs/msg/detection2_d.hpp>
+#include <vision_msgs/msg/object_hypothesis_with_pose.hpp>
 
 namespace vision
 {
@@ -60,6 +61,8 @@ InferenceComponent::InferenceComponent(const rclcpp::NodeOptions & options)
 
   // We will publish the debug image here
   image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("detections_debug", 10);
+
+  det_pub_ = this->create_publisher<vision_msgs::msg::Detection2DArray>("detections", 10);
 }
 
 void InferenceComponent::image_callback(sensor_msgs::msg::Image::UniquePtr msg)
@@ -125,6 +128,9 @@ if (num_detections > 0) {
       int original_w = frame.cols;
       int original_h = frame.rows;
 
+      vision_msgs::msg::Detection2DArray det_array_msg;
+      det_array_msg.header = msg->header; // Copy the exact timestamp from the camera!
+
       for (size_t i = 0; i < num_detections; ++i) {
         if (scores_data[i] > 0.85) { // NOW this is actually checking the real confidence score
           int box_idx = i * 4;
@@ -141,6 +147,23 @@ if (num_detections > 0) {
           if (x2 > x1 && y2 > y1) {
             int cls_id = static_cast<int>(classes_data[i]);
             
+            // --- POPULATE RAW DATA ---
+            vision_msgs::msg::Detection2D det;
+            det.header = det_array_msg.header;
+            
+            // Calculate center and sizes
+            det.bbox.center.position.x = (x1 + x2) / 2.0;
+            det.bbox.center.position.y = (y1 + y2) / 2.0;
+            det.bbox.size_x = x2 - x1;
+            det.bbox.size_y = y2 - y1;
+
+            vision_msgs::msg::ObjectHypothesisWithPose hyp;
+            hyp.hypothesis.class_id = std::to_string(cls_id);
+            hyp.hypothesis.score = scores_data[i];
+            det.results.push_back(hyp);
+            
+            det_array_msg.detections.push_back(det);
+
             if (debug_viz) {
               std::string label = "Unknown";
               cv::Scalar color = cv::Scalar(255, 0, 255); // Default Purple
@@ -172,11 +195,13 @@ if (num_detections > 0) {
           }
         }
       }
+      if (!det_array_msg.detections.empty()) {
+        det_pub_->publish(det_array_msg);
+      }  
     }
   } catch (const Ort::Exception& e) {
     RCLCPP_ERROR(this->get_logger(), "ORT Exception: %s", e.what());
   }
-
   // Only publish the heavy image message if debug mode is on
   if (debug_viz) {
     image_pub_->publish(*cv_ptr->toImageMsg());

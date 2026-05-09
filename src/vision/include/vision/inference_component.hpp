@@ -3,8 +3,10 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <vision_msgs/msg/detection2_d_array.hpp> // <-- Added for det_pub_
 #include <onnxruntime_cxx_api.h>
 #include "vision/visibility_control.h"
+
 
 namespace vision
 {
@@ -19,6 +21,7 @@ private:
   
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_pub_; 
+  rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr det_pub_;
   std::unique_ptr<Ort::Session> session_;
 };
 }  // namespace vision

@@ -12,6 +12,10 @@ find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 
+find_package(message_filters REQUIRED)
+find_package(vision_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+
 include_directories(include)
 
 # --- Build Camera Component ---
@@ -40,26 +44,33 @@ target_include_directories(inference_component PRIVATE
   ${ONNXRUNTIME_DIR}/include # Crucial for finding cuda_provider_factory.h
 )
 target_link_libraries(inference_component ${OpenCV_LIBS} ${ONNXRUNTIME_LIB})
-ament_target_dependencies(inference_component rclcpp rclcpp_components sensor_msgs cv_bridge)
+ament_target_dependencies(inference_component rclcpp rclcpp_components sensor_msgs cv_bridge vision_msgs)
 rclcpp_components_register_node(inference_component PLUGIN "vision::InferenceComponent" EXECUTABLE inference_node)
-
 
 # --- Build Kinect Component ---
 add_library(kinect_component SHARED src/kinect_component.cpp)
 target_include_directories(kinect_component PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-
-# Notice we add "freenect" to the target_link_libraries here
 target_link_libraries(kinect_component ${OpenCV_LIBS} freenect)
 ament_target_dependencies(kinect_component rclcpp rclcpp_components sensor_msgs cv_bridge)
 rclcpp_components_register_node(kinect_component PLUGIN "vision::KinectComponent" EXECUTABLE kinect_node)
+
+# --- Build Target Locator Component ---
+add_library(target_locator_component SHARED src/target_locator_component.cpp)
+target_include_directories(target_locator_component PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(target_locator_component ${OpenCV_LIBS})
+ament_target_dependencies(target_locator_component rclcpp rclcpp_components sensor_msgs cv_bridge message_filters vision_msgs geometry_msgs)
+rclcpp_components_register_node(target_locator_component PLUGIN "vision::TargetLocatorComponent" EXECUTABLE target_locator_node)
 
 # Notice inference_component is removed from the TARGETS list below
 install(TARGETS 
   camera_component 
   kinect_component
   inference_component
+  target_locator_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
