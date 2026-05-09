@@ -26,3 +26,26 @@ rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 ```
+
+## Starting the robot
+
+You can launch either the simulation or the real robot. In both cases, make sure to source the workspace first.
+
+```bash
+cd ashr_ws
+source install/setup.bash
+```
+
+### Launching gazebo 
+
+Use the following command to start the robot in Gazebo along with all required simulation components:
+```bash
+ros2 launch probot_bringup gazebo_bringup.launch.py
+```
+
+### Launching real hardware
+Use the following command to start the robot on real hardware:
+```bash
+ros2 launch probot_bringup hardware_demo.launch.py
+```
+Note: At the moment, this launch file starts only the robot hardware interface and does not include the camera nodes.
