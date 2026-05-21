@@ -132,7 +132,7 @@ if (num_detections > 0) {
       det_array_msg.header = msg->header; // Copy the exact timestamp from the camera!
 
       for (size_t i = 0; i < num_detections; ++i) {
-        if (scores_data[i] > 0.85) { // NOW this is actually checking the real confidence score
+        if (scores_data[i] > 0.75) { // NOW this is actually checking the real confidence score
           int box_idx = i * 4;
           int x1 = static_cast<int>(boxes_data[box_idx] * original_w / 640);
           int y1 = static_cast<int>(boxes_data[box_idx + 1] * original_h / 640);
