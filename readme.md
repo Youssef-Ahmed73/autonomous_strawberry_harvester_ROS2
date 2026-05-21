@@ -3,6 +3,26 @@
 ## About the project
 I will write this later XD
 
+## Software architecture
+The ASHR project is a modular ROS 2 Humble-based system for autonomous strawberry harvesting, integrating robot motion, perception, and simulation. The architecture is organized into several core packages:
+
+- **probot_description**: Defines the robot’s physical model, kinematics, and sensor frames in URDF/XACRO, serving as the source of truth for all geometry and joint definitions.
+- **moveit_config**: Provides the motion planning and controller configuration for the robot, including MoveIt planning groups, controller YAMLs, and kinematics/limits.
+- **probot_bringup**: The orchestration layer that launches the robot in simulation or real hardware, wiring together robot description, MoveIt, controllers, and optional Gazebo simulation. It manages conditional startup for both real and simulated environments.
+- **probot_hardware**: Implements the hardware interface plugin for ROS 2 control, translating joint commands into actuator messages for the real robot.
+- **ashr_gazebo**: Supplies Gazebo world files, mesh assets, and bridge configuration for simulation, enabling seamless integration between ROS 2 and the Gazebo simulator.
+- **vision**: Handles perception, including camera capture, object detection (using ONNX models), and 3D target localization by synchronizing RGB, depth, and detection streams.
+
+The system is designed for flexibility: you can launch the robot in simulation (with Gazebo and full perception stack) or on real hardware. Communication between components is handled via ROS 2 topics and services, with clear conventions for frames and topic names. Synchronization between perception and planning is achieved using message filters and approximate time policies, ensuring robust operation even with sensor delays.
+
+Key architectural goals:
+- Decouple perception, planning, and actuation for easy testing and extension
+- Support both simulation and real hardware with minimal launch changes
+- Maintain clear frame and topic conventions for reliable integration
+- Enable AI-driven perception and planning by exposing all sensor and state data in standard ROS 2 formats
+
+This modular design allows future contributors to extend any layer (e.g., swap in a new vision model, add a new controller, or change the robot geometry) with minimal impact on the rest of the stack.
+
 ## Pre-installing configuration
 Before you download the repo make sure you:
 
