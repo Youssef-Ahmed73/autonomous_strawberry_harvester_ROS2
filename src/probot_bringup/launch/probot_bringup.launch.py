@@ -154,6 +154,13 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["ee_controller", "--controller-manager", "/controller_manager"],
+    )
+
+
+    servo_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["servo_controller", "--inactive"], # Starts asleep
     )    
 
 
@@ -185,4 +192,5 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         arm_controller_spawner,
         ee_controller_spawner,
+        servo_controller_spawner,
     ])

@@ -6,16 +6,14 @@ controller_manager:
     arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-
     ee_controller:
       type: joint_trajectory_controller/JointTrajectoryController
-
-    iris_controller:
-      type: forward_command_controller/ForwardCommandController  
-
-
+ 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
+
+    servo_controller:
+      type: position_controllers/JointGroupPositionController
 
 arm_controller:
   ros__parameters:
@@ -43,3 +41,15 @@ ee_controller:
     state_interfaces:
       - position
 #      - velocity
+
+servo_controller:
+  ros__parameters:
+    joints:
+      - joint_1
+      - joint_2
+      - joint_3
+      - joint_4
+      - joint_5
+      - joint_6
+
+
