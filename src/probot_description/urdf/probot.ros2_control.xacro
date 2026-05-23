@@ -20,6 +20,8 @@
 
                 <xacro:if value="${use_isaac}">
                     <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
+                    <param name="joint_commands_topic">/isaac_joint_commands</param>
+                    <param name="joint_states_topic">/isaac_joint_states</param>
                 </xacro:if>
             </hardware>
 
@@ -87,7 +89,7 @@
                 </state_interface>
             </joint> 
 
-            <xacro:if value="${use_gazebo}">
+            <xacro:if value="${use_gazebo == 'true' or use_isaac == 'true'}">
                 <!-- Passive Scissors mimics Active Scissors -->
                 <joint name="Passive_Scissors_Gear_Joint">
                     <param name="mimic">Active_Scissors_Gear_Joint</param>
