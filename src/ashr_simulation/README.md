@@ -1,8 +1,8 @@
-# ashr_gazebo
+# ashr_simulation
 
 ## Purpose
 
-`ashr_gazebo` is the Gazebo/ROS 2 simulation asset package for the Probot project. It contains the Gazebo world, bridge configuration, and mesh resources used when the robot is brought up in simulation.
+`ashr_simulation` is the Gazebo/ROS 2 simulation asset package for the Probot project. It contains the Gazebo world, bridge configuration, and mesh resources used when the robot is brought up in simulation.
 
 ## System role
 
@@ -13,7 +13,7 @@ This package is a resource-only package that supports simulated execution. It do
 - `worlds/ashr_world.sdf` - primary Gazebo simulation world for the robot and environment
 - `config/bridge.yaml` - ROS/Gazebo bridge configuration used by `ros_gz_bridge`
 - `meshes/` - static geometry assets referenced by the URDF / Gazebo world
-- `CMakeLists.txt` - installs simulation assets to `share/ashr_gazebo`
+- `CMakeLists.txt` - installs simulation assets to `share/ashr_simulation`
 - `package.xml` - declares the package as `ament_cmake` and identifies it as a simulation resource package
 
 ## Architecture and communication graph

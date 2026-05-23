@@ -10,7 +10,7 @@ The ASHR project is a modular ROS 2 Humble-based system for autonomous strawberr
 - **moveit_config**: Provides the motion planning and controller configuration for the robot, including MoveIt planning groups, controller YAMLs, and kinematics/limits.
 - **probot_bringup**: The orchestration layer that launches the robot in simulation or real hardware, wiring together robot description, MoveIt, controllers, and optional Gazebo simulation. It manages conditional startup for both real and simulated environments.
 - **probot_hardware**: Implements the hardware interface plugin for ROS 2 control, translating joint commands into actuator messages for the real robot.
-- **ashr_gazebo**: Supplies Gazebo world files, mesh assets, and bridge configuration for simulation, enabling seamless integration between ROS 2 and the Gazebo simulator.
+- **ashr_simulation**: Supplies Gazebo world files, mesh assets, and bridge configuration for simulation, enabling seamless integration between ROS 2 and the Gazebo simulator.
 - **vision**: Handles perception, including camera capture, object detection (using ONNX models), and 3D target localization by synchronizing RGB, depth, and detection streams.
 
 The system is designed for flexibility: you can launch the robot in simulation (with Gazebo and full perception stack) or on real hardware. Communication between components is handled via ROS 2 topics and services, with clear conventions for frames and topic names. Synchronization between perception and planning is achieved using message filters and approximate time policies, ensuring robust operation even with sensor delays.

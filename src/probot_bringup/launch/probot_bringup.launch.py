@@ -16,13 +16,13 @@ def generate_launch_description():
     pkg_probot_description = get_package_share_directory('probot_description')
     pkg_moveit_config = get_package_share_directory('moveit_config') 
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-    pkg_ashr_gazebo = get_package_share_directory('ashr_gazebo')
+    pkg_ashr_simulation = get_package_share_directory('ashr_simulation')
 
     controllers_yaml = os.path.join(pkg_moveit_config, 'config', 'ros2_controllers.yaml')
     rviz_config_file = os.path.join(pkg_moveit_config, 'config', 'moveit.rviz')
 
-    world_file = os.path.join(pkg_ashr_gazebo, 'worlds', 'ashr_world.sdf')
-    bridge_config_file = os.path.join(pkg_ashr_gazebo, 'config', 'bridge.yaml')
+    world_file = os.path.join(pkg_ashr_simulation, 'worlds', 'ashr_world.sdf')
+    bridge_config_file = os.path.join(pkg_ashr_simulation, 'config', 'bridge.yaml')
 
     # ---------------------------------------------------------
     # 2. Launch Configurations
@@ -104,10 +104,10 @@ def generate_launch_description():
     # 6. Gazebo (Ignition) Nodes (Conditional)
     # ---------------------------------------------------------
     probot_mesh_dir = os.path.join(pkg_probot_description, '..')
-    ashr_gazebo_mesh_dir = os.path.join(pkg_ashr_gazebo, '..')
+    ashr_simulation_mesh_dir = os.path.join(pkg_ashr_simulation, '..')
     
     # Combine both package paths
-    gz_resource_path = probot_mesh_dir + ':' + ashr_gazebo_mesh_dir
+    gz_resource_path = probot_mesh_dir + ':' + ashr_simulation_mesh_dir
     
     if 'IGN_GAZEBO_RESOURCE_PATH' in os.environ:
         gz_resource_path = os.environ['IGN_GAZEBO_RESOURCE_PATH'] + ':' + gz_resource_path

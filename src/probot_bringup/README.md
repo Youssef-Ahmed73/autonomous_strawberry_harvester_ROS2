@@ -30,7 +30,7 @@
 - `use_gazebo=true`:
   - include `ros_gz_sim` launch
   - spawn the robot entity from `probot_description`
-  - start `ros_gz_bridge` with `ashr_gazebo/config/bridge.yaml`
+  - start `ros_gz_bridge` with `ashr_simulation/config/bridge.yaml`
   - skip launching `ros2_control_node` explicitly because Gazebo loads its own controller manager
 - `use_gazebo=false`:
   - launch `ros2_control_node` with controller YAML from `moveit_config`
@@ -54,7 +54,7 @@
 - `MoveItConfigsBuilder` uses the same XACRO file path and parameter names as `moveit_config`.
 - `use_mock_hardware`, `use_real_hardware`, `use_gazebo`, and `use_isaac` are passed into the robot description builder and are therefore coupled to XACRO macro parameters.
 - The controller spawner names in this launch file must match the names defined in `config/ros2_controllers.yaml`.
-- `probot_bringup.launch.py` assumes `ashr_gazebo` provides valid mesh and world assets when `use_gazebo=true`.
+- `probot_bringup.launch.py` assumes `ashr_simulation` provides valid mesh and world assets when `use_gazebo=true`.
 - `ros_gz_bridge` depends on `bridge.yaml` mapping topics produced by Gazebo to the expected ROS namespaces.
 
 ## Behavioral constraints
@@ -72,5 +72,5 @@
 ## Useful details for AI context
 
 - This package is the high-level bootstrap layer of the robot.
-- It does not implement controllers or perceptions itself; it delegates to `moveit_config`, `probot_description`, `probot_hardware`, `ashr_gazebo`, and `vision`.
+- It does not implement controllers or perceptions itself; it delegates to `moveit_config`, `probot_description`, `probot_hardware`, `ashr_simulation`, and `vision`.
 - It is the place to adjust whole-system launch behavior, not individual algorithm behavior.
