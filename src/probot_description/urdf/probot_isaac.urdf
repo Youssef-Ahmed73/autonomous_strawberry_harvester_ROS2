@@ -344,13 +344,16 @@
       </geometry>
     </collision>
   </link>
+
   <joint name="Active_Scissors_Gear_Joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0116745834389464 -0.0551236385761704 0.122199999999998"/>
     <parent link="Container_link"/>
     <child link="Active_Scissors_Gear_Link"/>
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="0" upper="0.5" velocity="6.28"/>
+    <dynamics damping="0.002" friction="0.002"/>
   </joint>
+
   <link name="Active_Blade_Link">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.00876871024480015 0.0311631307249487 0.00193034918440163"/>
@@ -397,14 +400,17 @@
       </geometry>
     </collision>
   </link>
+
   <joint name="Passive_Scissors_Gear_Joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0356480493609751 -0.0439561747779156 0.1231"/>
     <parent link="Container_link"/>
     <child link="Passive_Scissors_Gear_Link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="10" lower="-6.28" upper="6.28" velocity="6.28"/>
+    <limit effort="10" lower="0" upper="0.5" velocity="6.28"/>
     <mimic joint="Active_Scissors_Gear_Joint" multiplier="-1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
+
   <link name="Passive_Blade_Link">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.017306 0.027376 0.0019297"/>
@@ -451,13 +457,16 @@
       </geometry>
     </collision>
   </link>
+
   <joint name="Iris_Active_Gear_Joint" type="revolute">
     <origin rpy="-3.14159265358979 0 0" xyz="0.0799093458453353 0.0121608340345881 0.14234666667"/>
     <parent link="Container_link"/>
     <child link="Iris_Active_Gear_Link"/>
     <axis xyz="0 0 1"/>
     <limit effort="10" lower="0.0" upper="1.57" velocity="6.28"/>
+    <dynamics damping="0.002" friction="0.002"/>
   </joint>
+
   <link name="Iris_Passive_Gear_Link">
     <inertial>
       <origin rpy="0 0 0" xyz="0.0020485 0.00029915 0.0015558"/>
@@ -478,6 +487,7 @@
       </geometry>
     </collision>
   </link>
+
   <joint name="Iris_Passive_Gear_Joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 0.144801833336666"/>
     <parent link="Container_link"/>
@@ -485,7 +495,9 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris_Active_Gear_Joint" multiplier="-0.3367" offset="0"/>
+    <dynamics damping="0.002" friction="0.002"/>
   </joint>
+
   <link name="Iris1_Link">
     <inertial>
       <origin rpy="0 0 0" xyz="0.0123168506307957 -0.010323478737693 -0.000857619665064174"/>
@@ -506,6 +518,7 @@
       </geometry>
     </collision>
   </link>
+
   <joint name="Iris1_Joint" type="revolute">
     <origin rpy="-3.14159265358979 0 3.14159265358979" xyz="0.0326097658681697 0.0257615349190274 0"/>
     <parent link="Iris_Passive_Gear_Link"/>
@@ -513,7 +526,9 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris_Passive_Gear_Joint" multiplier="1.6" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
+
   <link name="Iris2_Link">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.0158284449856681 0.00278196952962637 -0.000857619755370576"/>
@@ -541,6 +556,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris3_Link">
     <inertial>
@@ -569,6 +585,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris4_Link">
     <inertial>
@@ -597,6 +614,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris5_Link">
     <inertial>
@@ -625,6 +643,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris6_Link">
     <inertial>
@@ -653,6 +672,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris7_Link">
     <inertial>
@@ -681,6 +701,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris8_Link">
     <inertial>
@@ -709,6 +730,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris9_Link">
     <inertial>
@@ -737,6 +759,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris10_Link">
     <inertial>
@@ -758,13 +781,14 @@
       </geometry>
     </collision>
   </link>
-  <joint name="Iris10_Joint" type="revolute">
+  <joint name="iris90_joint" type="revolute">
     <origin rpy="3.14159265358979 0 0" xyz="-0.0257615349190274 0.0326097658681697 0"/>
     <parent link="Iris_Passive_Gear_Link"/>
     <child link="Iris10_Link"/>
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris11_Link">
     <inertial>
@@ -786,13 +810,14 @@
       </geometry>
     </collision>
   </link>
-  <joint name="Iris11_Joint" type="revolute">
+  <joint name="iris91_joint" type="revolute">
     <origin rpy="3.14159265358979 0 0" xyz="-0.00600526074627281 0.0411216531128113 0"/>
     <parent link="Iris_Passive_Gear_Link"/>
     <child link="Iris11_Link"/>
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <link name="Iris12_Link">
     <inertial>
@@ -814,13 +839,14 @@
       </geometry>
     </collision>
   </link>
-  <joint name="Iris12_Joint" type="revolute">
+  <joint name="iris92_joint" type="revolute">
     <origin rpy="3.14159265358979 0 0" xyz="0.0153601181937839 0.0386150266144425 0"/>
     <parent link="Iris_Passive_Gear_Link"/>
     <child link="Iris12_Link"/>
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-3.14" upper="3.14" velocity="6.28"/>
     <mimic joint="Iris1_Joint" multiplier="1" offset="0"/>
+    <dynamics damping="0.001" friction="0.001"/>
   </joint>
   <!-- ESP Cameras & LEDs -->
   <link name="esp_camera1"/>
@@ -847,10 +873,13 @@
     <parent link="Container_link"/>
     <child link="LED2_Link"/>
   </joint>
+
   <ros2_control name="ProbotSystem" type="system">
     <hardware>
       <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
     </hardware>
+    
+    <!-- Active Arm Joints -->
     <joint name="joint_1">
       <command_interface name="position"/>
       <state_interface name="position">
@@ -887,6 +916,8 @@
         <param name="initial_value">0</param>
       </state_interface>
     </joint>
+
+    <!-- Active Gripper Joints -->
     <joint name="Active_Scissors_Gear_Joint">
       <command_interface name="position"/>
       <state_interface name="position">
@@ -905,5 +936,50 @@
         <param name="initial_value">0</param>
       </state_interface>
     </joint>
+
+    <!-- Passive (Mimic) Gripper Joints - STATE ONLY -->
+    <joint name="Passive_Scissors_Gear_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris_Passive_Gear_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris1_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris2_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris3_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris4_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris5_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris6_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris7_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris8_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="Iris9_Joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="iris90_joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="iris91_joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
+    <joint name="iris92_joint">
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+    </joint>
   </ros2_control>
+
 </robot>
