@@ -8,9 +8,10 @@ The ASHR project is a modular ROS 2 Humble-based system for autonomous strawberr
 
 - **probot_description**: Defines the robot’s physical model, kinematics, and sensor frames in URDF/XACRO, serving as the source of truth for all geometry and joint definitions.
 - **moveit_config**: Provides the motion planning and controller configuration for the robot, including MoveIt planning groups, controller YAMLs, and kinematics/limits.
+- **motion_planning**: Provides joystick teleoperation and MoveIt Servo integration for the Probot arm, translating Xbox controller inputs into motion commands.
 - **probot_bringup**: The orchestration layer that launches the robot in simulation or real hardware, wiring together robot description, MoveIt, controllers, and optional Gazebo simulation. It manages conditional startup for both real and simulated environments.
 - **probot_hardware**: Implements the hardware interface plugin for ROS 2 control, translating joint commands into actuator messages for the real robot.
-- **ashr_simulation**: Supplies Gazebo world files, mesh assets, and bridge configuration for simulation, enabling seamless integration between ROS 2 and the Gazebo simulator.
+- **ashr_simulation**: Supplies Gazebo world files, Isaac/ROS 2 simulation assets, and bridge configuration for simulation, enabling seamless integration between ROS 2 and the simulator.
 - **vision**: Handles perception, including camera capture, object detection (using ONNX models), and 3D target localization by synchronizing RGB, depth, and detection streams.
 
 The system is designed for flexibility: you can launch the robot in simulation (with Gazebo and full perception stack) or on real hardware. Communication between components is handled via ROS 2 topics and services, with clear conventions for frames and topic names. Synchronization between perception and planning is achieved using message filters and approximate time policies, ensuring robust operation even with sensor delays.
@@ -61,6 +62,18 @@ source install/setup.bash
 Use the following command to start the robot in Gazebo along with all required simulation components:
 ```bash
 ros2 launch probot_bringup gazebo_bringup.launch.py
+```
+
+### Launching joystick teleoperation
+Use the following command to start the Xbox controller interface for MoveIt Servo teleoperation:
+```bash
+ros2 launch motion_planning joystick_servo.launch.py
+```
+
+### Launching vision
+Use the following command to start the Kinect-based vision pipeline:
+```bash
+ros2 launch vision kinect.launch.py
 ```
 
 ### Launching real hardware

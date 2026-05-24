@@ -26,7 +26,8 @@ This package is the planning/configuration layer of the robot stack:
 ## Key contents
 
 - `config/probot_anno.urdf.xacro` - robot description source for planning and control
-- `config/ros2_controllers.yaml` - controller definitions for `ros2_control_node`
+- `config/probot_anno.ros2_control.xacro` - `ros2_control` robot model that includes optional Isaac-specific topic mapping and `use_isaac` gating
+- `config/ros2_controllers.yaml` - controller definitions for `ros2_control_node`, including `servo_controller`
 - `config/moveit_controllers.yaml` - MoveIt trajectory execution settings
 - `config/kinematics.yaml` - inverse kinematics solver parameters
 - `config/joint_limits.yaml` - joint limit guardrails used by MoveIt

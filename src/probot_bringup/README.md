@@ -23,7 +23,7 @@
 - `rviz2` visualizes the planning scene using MoveIt parameters and the robot description.
 - `ros2_control_node` provides the hardware interface when `use_gazebo` is false.
 - In Gazebo mode, `ros_gz_sim` and `ros_gz_bridge` provide the simulated joint state / actuator interface.
-- The launch uses `joint_state_broadcaster`, `arm_controller`, and `ee_controller` to bridge joint commands from MoveIt to the hardware stack.
+- The launch uses `joint_state_broadcaster`, `arm_controller`, `ee_controller`, and a `servo_controller` that is spawned inactive to support MoveIt Servo teleoperation.
 
 ## Conditional runtime paths
 
@@ -32,6 +32,10 @@
   - spawn the robot entity from `probot_description`
   - start `ros_gz_bridge` with `ashr_simulation/config/bridge.yaml`
   - skip launching `ros2_control_node` explicitly because Gazebo loads its own controller manager
+- `use_isaac=true`:
+  - follow a similar simulated hardware/description path for Isaac Sim compatibility
+  - use the same `probot_description` model with Isaac-specific topic mappings when available
+  - still load `ros_gz_bridge` and `ros2_control` assets from `ashr_simulation`
 - `use_gazebo=false`:
   - launch `ros2_control_node` with controller YAML from `moveit_config`
   - still run `robot_state_publisher`, `move_group`, and `rviz2`

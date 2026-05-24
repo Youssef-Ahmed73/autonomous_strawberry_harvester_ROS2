@@ -13,6 +13,7 @@ This package is a resource-only package that supports simulated execution. It do
 - `worlds/ashr_world.sdf` - primary Gazebo simulation world for the robot and environment
 - `config/bridge.yaml` - ROS/Gazebo bridge configuration used by `ros_gz_bridge`
 - `meshes/` - static geometry assets referenced by the URDF / Gazebo world
+- `isaac/` - Isaac Sim USD assets and scene files for the Isaac-compatible simulation path
 - `CMakeLists.txt` - installs simulation assets to `share/ashr_simulation`
 - `package.xml` - declares the package as `ament_cmake` and identifies it as a simulation resource package
 

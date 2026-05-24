@@ -31,6 +31,16 @@ The package is composed of four core component nodes:
    - Uses `message_filters::ApproximateTime` to synchronize these 3 streams.
    - Computes a 3D pose for the first valid detection and publishes it on `target_pose`.
 
+## Launching
+
+- `vision/launch/kinect.launch.py` starts the Kinect, inference, and target locator components in a multi-threaded component container (`component_container_mt`).
+- `KinectComponent` publishes:
+  - `kinect/rgb/image_raw`
+  - `kinect/depth/image_raw`
+  - `kinect/depth/camera_info`
+- `InferenceComponent` expects image input on `image_raw` and produces detections used by `TargetLocatorComponent`.
+- `TargetLocatorComponent` requires both depth and camera info topics to compute accurate 3D target poses.
+
 ## Communication graph
 
 - `CameraComponent` → `image_raw` → `InferenceComponent`
