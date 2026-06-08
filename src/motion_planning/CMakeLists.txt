@@ -11,6 +11,8 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(trajectory_msgs REQUIRED)
+find_package(controller_manager_msgs REQUIRED)
 find_package(control_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
@@ -33,6 +35,8 @@ ament_target_dependencies(joystick_servo_node
   rclcpp
   sensor_msgs
   geometry_msgs
+  trajectory_msgs
+  controller_manager_msgs
   control_msgs
   std_msgs
   std_srvs

@@ -4,58 +4,26 @@
  *
  * ── BUTTON / AXIS MAPPING (Xbox 360) ─────────────────────────────────────────
  *
- *  AXES  (joy.axes[])
- *    0  Left  stick  horizontal  (left = +1, right = −1)
- *    1  Left  stick  vertical    (up   = +1, down  = −1)
- *    2  Left  trigger            (released = +1, pressed = −1)
- *    3  Right stick  horizontal  (left = +1, right = −1)
- *    4  Right stick  vertical    (up   = +1, down  = −1)
- *    5  Right trigger            (released = +1, pressed = −1)
- *    6  D-pad horizontal         (left = +1, right = −1)
- *    7  D-pad vertical           (up   = +1, down  = −1)
+ * AXES  (joy.axes[])
+ * 0  Left  stick  horizontal  (left = +1, right = −1)
+ * 1  Left  stick  vertical    (up   = +1, down  = −1)
+ * 2  Left  trigger            (released = +1, pressed = −1)
+ * 3  Right stick  horizontal  (left = +1, right = −1)
+ * 4  Right stick  vertical    (up   = +1, down  = −1)
+ * 5  Right trigger            (released = +1, pressed = −1)
  *
- *  BUTTONS (joy.buttons[])
- *    0  A
- *    1  B
- *    2  X
- *    3  Y
- *    4  LB
- *    5  RB
- *    6  Back
- *    7  Start
- *    8  Xbox (guide)
- *    9  Left  stick press
- *   10  Right stick press
- *
- * ── CONTROL SCHEME ───────────────────────────────────────────────────────────
- *
- *  Cartesian mode (default):
- *    Left  stick  X/Y → EEF linear  X / Y
- *    Right stick  Y   → EEF linear  Z
- *    Right stick  X   → EEF roll  (rotate around X)
- *    LT / RT          → EEF pitch  (LT = +, RT = −)   [triggers, mapped 0-1]
- *    D-pad  X         → EEF yaw   (rotate around Z)
- *    Frame toggle     → Y button   (base_link  ↔  link_6)
- *
- *  Joint mode:
- *    Left  stick  X   → joint_1
- *    Left  stick  Y   → joint_2
- *    Right stick  X   → joint_3
- *    Right stick  Y   → joint_4
- *    LT / RT          → joint_5   (LT = +, RT = −)
- *    D-pad  X         → joint_6
- *
- *  Both modes:
- *    A button  → toggle Cartesian / Joint mode   (prints to terminal)
- *    Y button  → toggle command frame: base_link ↔ link_6  (Cartesian only)
- *    Start     → call /servo_node/start_servo service  (convenience)
- *    Back      → deadman: hold while moving for an extra safety layer (optional,
- *                         see DEADMAN_ENABLED below)
- *
- * ── DEADMAN SWITCH ────────────────────────────────────────────────────────────
- *  Set DEADMAN_ENABLED = true to require the Back button to be held before any
- *  command is published.  Useful on real hardware.  Disabled by default so that
- *  simulation is easier to use.
+ * BUTTONS (joy.buttons[])
+ * 0  A     (Toggle Iris)
+ * 1  B     (Toggle Door)
+ * 2  X     (Toggle Scissor)
+ * 3  Y     (Toggle Frame)
+ * 4  LB    (Joint 6 / Yaw +)
+ * 5  RB    (Joint 6 / Yaw -)
+ * 6  Back  (Toggle Mode)
+ * 7  Start (Toggle Controllers & Start Servo)
+ * 8  Xbox (guide)
+ * 9  Left  stick press (Deadman)
+ * 10 Right stick press
  *
  * @author  ASHR team
  */
@@ -71,70 +39,56 @@
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "control_msgs/msg/joint_jog.hpp"
 #include "std_srvs/srv/trigger.hpp"
+#include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "trajectory_msgs/msg/joint_trajectory_point.hpp"
+#include "controller_manager_msgs/srv/switch_controller.hpp"
 
 using namespace std::chrono_literals;
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Compile-time options
-// ─────────────────────────────────────────────────────────────────────────────
-static constexpr bool DEADMAN_ENABLED = false;   // set true for real hardware
+static constexpr bool DEADMAN_ENABLED = false;
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Xbox 360 axis indices
-// ─────────────────────────────────────────────────────────────────────────────
 static constexpr int AX_LEFT_X  = 0;
 static constexpr int AX_LEFT_Y  = 1;
-static constexpr int AX_LT      = 2;   // released=+1, fully pressed=−1
+static constexpr int AX_LT      = 2;   
 static constexpr int AX_RIGHT_X = 3;
 static constexpr int AX_RIGHT_Y = 4;
-static constexpr int AX_RT      = 5;   // released=+1, fully pressed=−1
-static constexpr int AX_DPAD_X  = 6;
-// static constexpr int AX_DPAD_Y  = 7;  // reserved for future use
+static constexpr int AX_RT      = 5;   
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Xbox 360 button indices
-// ─────────────────────────────────────────────────────────────────────────────
-static constexpr int BTN_A     = 0;
-static constexpr int BTN_B     = 1;   // reserved / future
-static constexpr int BTN_X     = 2;   // reserved / future
-static constexpr int BTN_Y     = 3;
-static constexpr int BTN_LB    = 4;   // reserved / future
-static constexpr int BTN_RB    = 5;   // reserved / future
-static constexpr int BTN_BACK  = 6;   // deadman
-static constexpr int BTN_START = 7;   // start servo service
+static constexpr int BTN_A       = 0;
+static constexpr int BTN_B       = 1;   
+static constexpr int BTN_X       = 2;   
+static constexpr int BTN_Y       = 3;
+static constexpr int BTN_LB      = 4;   
+static constexpr int BTN_RB      = 5;   
+static constexpr int BTN_BACK    = 6;   
+static constexpr int BTN_START   = 7;   
+static constexpr int BTN_DEADMAN = 9;   
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Joint names for the Probot arm (must match moveit_config SRDF / URDF)
-// ─────────────────────────────────────────────────────────────────────────────
 static const std::vector<std::string> JOINT_NAMES = {
   "joint_1", "joint_2", "joint_3",
   "joint_4", "joint_5", "joint_6"
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Helper: apply a small dead-zone to an axis value
-// ─────────────────────────────────────────────────────────────────────────────
+static constexpr double SCISSOR_OPEN  = 0.5;
+static constexpr double SCISSOR_CLOSE = 0.0;
+static constexpr double DOOR_OPEN     = -1.57;
+static constexpr double DOOR_CLOSE    = 0.0;
+static constexpr double IRIS_OPEN     = 1.57;
+static constexpr double IRIS_CLOSE    = 0.0;
+
 static double deadzone(double value, double threshold = 0.10)
 {
   if (std::abs(value) < threshold) return 0.0;
-  // rescale so the output starts from 0 right at the threshold
   return (value > 0.0)
     ? (value - threshold) / (1.0 - threshold)
     : (value + threshold) / (1.0 - threshold);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Helper: convert a trigger axis (released=+1, pressed=−1) → [0, 1]
-// ─────────────────────────────────────────────────────────────────────────────
 static double trigger_value(double raw)
 {
-  // raw ∈ [−1, +1]  →  pressed=1, released=0
   return (1.0 - raw) / 2.0;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Node class
-// ─────────────────────────────────────────────────────────────────────────────
 class JoystickServoNode : public rclcpp::Node
 {
 public:
@@ -142,86 +96,100 @@ public:
   : Node("joystick_servo_node"),
     cartesian_mode_(true),
     use_base_frame_(true),
-    prev_a_btn_(0),
+    servo_active_(false),
+    scissor_open_(false),
+    door_open_(false),
+    iris_open_(false),
+    prev_back_btn_(0),
     prev_y_btn_(0),
-    prev_start_btn_(0)
+    prev_start_btn_(0),
+    prev_x_btn_(0),
+    prev_b_btn_(0),
+    prev_a_btn_(0)
   {
-    // ── Publishers ───────────────────────────────────────────────────────────
     twist_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
       "/servo_node/delta_twist_cmds", rclcpp::SystemDefaultsQoS());
 
     joint_pub_ = this->create_publisher<control_msgs::msg::JointJog>(
       "/servo_node/delta_joint_cmds", rclcpp::SystemDefaultsQoS());
 
-    // ── Subscriber ───────────────────────────────────────────────────────────
+    ee_pub_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+      "/ee_controller/joint_trajectory", rclcpp::SystemDefaultsQoS());
+
     joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
       "/joy", rclcpp::SystemDefaultsQoS(),
       std::bind(&JoystickServoNode::joy_callback, this, std::placeholders::_1));
 
-    // ── Service client (to start servo on demand via Start button) ───────────
     servo_start_client_ = this->create_client<std_srvs::srv::Trigger>(
       "/servo_node/start_servo");
+
+    switch_controller_client_ = this->create_client<controller_manager_msgs::srv::SwitchController>(
+      "/controller_manager/switch_controller");
 
     RCLCPP_INFO(this->get_logger(),
       "\n"
       "================================================\n"
       "  ASHR Joystick Servo Node ready\n"
       "  Mode  : CARTESIAN  |  Frame: BASE_LINK\n"
-      "  A     : toggle Cartesian / Joint mode\n"
+      "  Back  : toggle Cartesian / Joint mode\n"
       "  Y     : toggle command frame (base ↔ EEF)\n"
-      "  Start : call /servo_node/start_servo\n"
+      "  X     : toggle Scissor\n"
+      "  B     : toggle Door\n"
+      "  A     : toggle Iris\n"
+      "  LB/RB : Yaw (Cartesian) / Joint 6 (Jog)\n"
+      "  Start : toggle servo/arm controllers & start\n"
       "%s"
       "================================================",
-      DEADMAN_ENABLED ? "  Back  : DEADMAN – hold to send commands\n" : "");
+      DEADMAN_ENABLED ? "  LS    : DEADMAN – hold to send commands\n" : "");
   }
 
 private:
-  // ── State ─────────────────────────────────────────────────────────────────
-  bool cartesian_mode_;    // true = Cartesian, false = joint jog
-  bool use_base_frame_;    // true = base_link,  false = link_6 (EEF)
+  bool cartesian_mode_;    
+  bool use_base_frame_;    
+  bool servo_active_;
 
-  int  prev_a_btn_;
+  bool scissor_open_;
+  bool door_open_;
+  bool iris_open_;
+
+  int  prev_back_btn_;
   int  prev_y_btn_;
   int  prev_start_btn_;
+  int  prev_x_btn_;
+  int  prev_b_btn_;
+  int  prev_a_btn_;
 
-  // ── ROS interfaces ────────────────────────────────────────────────────────
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
   rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr      joint_pub_;
+  rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr ee_pub_;
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr         joy_sub_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr              servo_start_client_;
+  rclcpp::Client<controller_manager_msgs::srv::SwitchController>::SharedPtr switch_controller_client_;
 
-  // ─────────────────────────────────────────────────────────────────────────
-  //  Main callback
-  // ─────────────────────────────────────────────────────────────────────────
   void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
   {
-    // Guard: make sure we have enough axes and buttons
-    if (static_cast<int>(msg->axes.size())   <= AX_DPAD_X ||
+    if (static_cast<int>(msg->axes.size())   <= AX_RT ||
         static_cast<int>(msg->buttons.size()) <= BTN_START)
     {
       RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 2000,
-        "Joy message has fewer axes/buttons than expected. "
-        "Check that joy_node is publishing Xbox 360 data.");
+        "Joy message has fewer axes/buttons than expected.");
       return;
     }
 
-    // ── Deadman check ───────────────────────────────────────────────────────
-    if (DEADMAN_ENABLED && msg->buttons[BTN_BACK] == 0)
+    if (DEADMAN_ENABLED && msg->buttons[BTN_DEADMAN] == 0)
     {
-      return;  // do not publish anything unless deadman is held
+      return;  
     }
 
-    // ── Toggle: A button → switch Cartesian / Joint mode (rising edge) ──────
-    if (msg->buttons[BTN_A] == 1 && prev_a_btn_ == 0)
+    if (msg->buttons[BTN_BACK] == 1 && prev_back_btn_ == 0)
     {
       cartesian_mode_ = !cartesian_mode_;
       RCLCPP_INFO(this->get_logger(),
         "Mode switched to: %s",
         cartesian_mode_ ? "CARTESIAN" : "JOINT JOG");
     }
-    prev_a_btn_ = msg->buttons[BTN_A];
+    prev_back_btn_ = msg->buttons[BTN_BACK];
 
-    // ── Toggle: Y button → switch command frame (rising edge) ───────────────
     if (msg->buttons[BTN_Y] == 1 && prev_y_btn_ == 0)
     {
       use_base_frame_ = !use_base_frame_;
@@ -231,14 +199,40 @@ private:
     }
     prev_y_btn_ = msg->buttons[BTN_Y];
 
-    // ── Start button → call start_servo service (rising edge) ───────────────
     if (msg->buttons[BTN_START] == 1 && prev_start_btn_ == 0)
     {
-      call_start_servo();
+      toggle_controllers();
     }
     prev_start_btn_ = msg->buttons[BTN_START];
 
-    // ── Dispatch to Cartesian or Joint publisher ─────────────────────────────
+    bool ee_changed = false;
+
+    if (msg->buttons[BTN_X] == 1 && prev_x_btn_ == 0)
+    {
+      scissor_open_ = !scissor_open_;
+      ee_changed = true;
+    }
+    prev_x_btn_ = msg->buttons[BTN_X];
+
+    if (msg->buttons[BTN_B] == 1 && prev_b_btn_ == 0)
+    {
+      door_open_ = !door_open_;
+      ee_changed = true;
+    }
+    prev_b_btn_ = msg->buttons[BTN_B];
+
+    if (msg->buttons[BTN_A] == 1 && prev_a_btn_ == 0)
+    {
+      iris_open_ = !iris_open_;
+      ee_changed = true;
+    }
+    prev_a_btn_ = msg->buttons[BTN_A];
+
+    if (ee_changed)
+    {
+      publish_ee_state();
+    }
+
     if (cartesian_mode_)
     {
       publish_twist(msg);
@@ -249,68 +243,119 @@ private:
     }
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
-  //  Publish a TwistStamped (Cartesian servo)
-  // ─────────────────────────────────────────────────────────────────────────
+  void toggle_controllers()
+  {
+    servo_active_ = !servo_active_;
+
+    if (!switch_controller_client_->service_is_ready())
+    {
+      RCLCPP_WARN(this->get_logger(),
+        "/controller_manager/switch_controller service not available.");
+    }
+    else
+    {
+      auto req = std::make_shared<controller_manager_msgs::srv::SwitchController::Request>();
+      
+      if (servo_active_)
+      {
+        req->activate_controllers = {"servo_controller"};
+        req->deactivate_controllers = {"arm_controller"};
+      }
+      else
+      {
+        req->activate_controllers = {"arm_controller"};
+        req->deactivate_controllers = {"servo_controller"};
+      }
+      
+      req->strictness = controller_manager_msgs::srv::SwitchController::Request::STRICT;
+
+      auto future = switch_controller_client_->async_send_request(req,
+        [this](rclcpp::Client<controller_manager_msgs::srv::SwitchController>::SharedFuture f)
+        {
+          auto res = f.get();
+          if (res->ok)
+          {
+            RCLCPP_INFO(this->get_logger(), "Controllers switched successfully. Servo active: %d", servo_active_);
+          }
+          else
+          {
+            RCLCPP_WARN(this->get_logger(), "Failed to switch controllers.");
+          }
+        });
+        
+      (void)future;
+    }
+
+    call_start_servo();
+  }
+
+  void publish_ee_state()
+  {
+    auto traj_msg = std::make_unique<trajectory_msgs::msg::JointTrajectory>();
+    traj_msg->header.stamp = this->now();
+    traj_msg->joint_names = {
+      "Active_Scissors_Gear_Joint", 
+      "Door_Joint", 
+      "Iris_Active_Gear_Joint"
+    };
+
+    trajectory_msgs::msg::JointTrajectoryPoint point;
+    point.positions.resize(3);
+    
+    point.positions[0] = scissor_open_ ? SCISSOR_OPEN : SCISSOR_CLOSE;
+    point.positions[1] = door_open_    ? DOOR_OPEN    : DOOR_CLOSE;
+    point.positions[2] = iris_open_    ? IRIS_OPEN    : IRIS_CLOSE;
+
+    point.time_from_start.sec = 0;
+    point.time_from_start.nanosec = 500000000; 
+
+    traj_msg->points.push_back(point);
+    ee_pub_->publish(std::move(traj_msg));
+  }
+
   void publish_twist(const sensor_msgs::msg::Joy::SharedPtr & msg)
   {
     auto twist_msg = std::make_unique<geometry_msgs::msg::TwistStamped>();
 
-    // A fresh timestamp is required by Servo on every message.
     twist_msg->header.stamp    = this->now();
     twist_msg->header.frame_id = use_base_frame_ ? "base_link" : "link_6";
 
-    // ── Linear velocities ──────────────────────────────────────────────────
-    //  Left stick:  X → EEF X,  Y → EEF Y
-    //  Right stick: Y → EEF Z
     twist_msg->twist.linear.x =  deadzone(msg->axes[AX_LEFT_X]);
     twist_msg->twist.linear.y =  deadzone(msg->axes[AX_LEFT_Y]);
     twist_msg->twist.linear.z =  deadzone(msg->axes[AX_RIGHT_Y]);
 
-    // ── Angular velocities ─────────────────────────────────────────────────
-    //  LT / RT      → pitch  (LT = positive, RT = negative)
-    //  Right stick X → roll
-    //  D-pad X       → yaw
     double lt = trigger_value(msg->axes[AX_LT]);
     double rt = trigger_value(msg->axes[AX_RT]);
-    double pitch = deadzone(lt - rt);   // net pitch command
+    double pitch = deadzone(lt - rt);   
 
-    twist_msg->twist.angular.x =  deadzone(msg->axes[AX_RIGHT_X]);  // roll
-    twist_msg->twist.angular.y =  pitch;                             // pitch
-    twist_msg->twist.angular.z =  deadzone(msg->axes[AX_DPAD_X]);   // yaw
+    double yaw_cmd = static_cast<double>(msg->buttons[BTN_LB] - msg->buttons[BTN_RB]);
+
+    twist_msg->twist.angular.x =  deadzone(msg->axes[AX_RIGHT_X]);  
+    twist_msg->twist.angular.y =  pitch;                             
+    twist_msg->twist.angular.z =  yaw_cmd;   
 
     twist_pub_->publish(std::move(twist_msg));
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
-  //  Publish a JointJog (joint-space servo)
-  // ─────────────────────────────────────────────────────────────────────────
   void publish_joint_jog(const sensor_msgs::msg::Joy::SharedPtr & msg)
   {
     auto jog_msg = std::make_unique<control_msgs::msg::JointJog>();
 
-    // A fresh timestamp is required by Servo on every message.
     jog_msg->header.stamp    = this->now();
-    jog_msg->header.frame_id = "base_link";  // not used by Servo for joint cmds
+    jog_msg->header.frame_id = "base_link";  
 
-    // Build velocity commands for all 6 joints.
-    //
-    //  joint_1 ← left  stick X
-    //  joint_2 ← left  stick Y
-    //  joint_3 ← right stick X
-    //  joint_4 ← right stick Y
-    //  joint_5 ← LT(+) / RT(−)
-    //  joint_6 ← D-pad X
     double lt = trigger_value(msg->axes[AX_LT]);
     double rt = trigger_value(msg->axes[AX_RT]);
+    
+    double joint_6_cmd = static_cast<double>(msg->buttons[BTN_LB] - msg->buttons[BTN_RB]);
 
     std::vector<double> velocities = {
-       deadzone(msg->axes[AX_LEFT_X]),   // joint_1
-       deadzone(msg->axes[AX_LEFT_Y]),   // joint_2
-       deadzone(msg->axes[AX_RIGHT_X]),  // joint_3
-       deadzone(msg->axes[AX_RIGHT_Y]),  // joint_4
-       deadzone(lt - rt),               // joint_5
-       deadzone(msg->axes[AX_DPAD_X]),  // joint_6
+       deadzone(msg->axes[AX_LEFT_X]),   
+       deadzone(msg->axes[AX_LEFT_Y]),   
+       deadzone(msg->axes[AX_RIGHT_X]),  
+       deadzone(msg->axes[AX_RIGHT_Y]),  
+       deadzone(lt - rt),               
+       joint_6_cmd,  
     };
 
     jog_msg->joint_names = JOINT_NAMES;
@@ -319,9 +364,6 @@ private:
     joint_pub_->publish(std::move(jog_msg));
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
-  //  Call /servo_node/start_servo
-  // ─────────────────────────────────────────────────────────────────────────
   void call_start_servo()
   {
     if (!servo_start_client_->service_is_ready())
@@ -339,7 +381,7 @@ private:
         auto response = f.get();
         if (response->success)
         {
-          RCLCPP_INFO(this->get_logger(), "Servo started successfully.");
+          RCLCPP_INFO(this->get_logger(), "Servo service triggered successfully.");
         }
         else
         {
@@ -348,19 +390,14 @@ private:
         }
       });
 
-    (void)future;  // suppress nodiscard warning
+    (void)future;  
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  main
-// ─────────────────────────────────────────────────────────────────────────────
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
 
-  // MultiThreadedExecutor lets the service callback and the joy subscriber
-  // run concurrently without blocking each other.
   auto executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   auto node     = std::make_shared<JoystickServoNode>();
 
