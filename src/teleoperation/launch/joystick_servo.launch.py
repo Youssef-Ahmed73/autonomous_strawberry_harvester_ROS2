@@ -12,7 +12,7 @@ def generate_launch_description():
     )
 
     servo_yaml = os.path.join(
-        get_package_share_directory("motion_planning"),
+        get_package_share_directory("teleoperation"),
         "config",
         "servo_config.yaml",
     )
@@ -42,7 +42,7 @@ def generate_launch_description():
     )
 
     joystick_servo_node = Node(
-        package="motion_planning",
+        package="teleoperation",
         executable="joystick_servo_node",
         name="joystick_servo_node",
         parameters=[{"use_sim_time": False}],

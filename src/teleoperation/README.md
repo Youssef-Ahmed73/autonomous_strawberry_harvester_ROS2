@@ -1,4 +1,4 @@
-# motion_planning
+# teleoperation
 
 Real-time Xbox 360 joystick teleoperation for the ASHR Probot arm using **MoveIt Servo**.
 
@@ -71,5 +71,5 @@ All dependencies are declared in `package.xml`. Key ones:
 ```bash
 cd ashr_ws
 rosdep install --from-paths src --ignore-src -r -y
-colcon build --symlink-install --packages-select motion_planning
+colcon build --symlink-install --packages-select teleoperation
 source install/setup.bash
