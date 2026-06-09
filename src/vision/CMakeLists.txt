@@ -65,12 +65,22 @@ target_link_libraries(target_locator_component ${OpenCV_LIBS})
 ament_target_dependencies(target_locator_component rclcpp rclcpp_components sensor_msgs cv_bridge message_filters vision_msgs geometry_msgs)
 rclcpp_components_register_node(target_locator_component PLUGIN "vision::TargetLocatorComponent" EXECUTABLE target_locator_node)
 
-# Notice inference_component is removed from the TARGETS list below
+# --- Build Classical Vision Component ---
+add_library(classical_vision_component SHARED src/classical_vision_component.cpp)
+target_include_directories(classical_vision_component PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(classical_vision_component ${OpenCV_LIBS})
+ament_target_dependencies(classical_vision_component rclcpp rclcpp_components sensor_msgs cv_bridge vision_msgs geometry_msgs)
+rclcpp_components_register_node(classical_vision_component PLUGIN "vision::ClassicalVisionComponent" EXECUTABLE classical_vision_node)
+
+
 install(TARGETS 
   camera_component 
   kinect_component
   inference_component
   target_locator_component
+  classical_vision_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
