@@ -27,6 +27,7 @@ install(DIRECTORY
   worlds
   config
   meshes
+  texture
   isaac
   DESTINATION share/${PROJECT_NAME}
 )
