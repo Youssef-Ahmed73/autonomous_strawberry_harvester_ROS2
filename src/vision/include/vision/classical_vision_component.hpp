@@ -8,6 +8,12 @@
 #include <cv_bridge/cv_bridge.h>
 #include "vision/visibility_control.h"
 
+// Include the custom service
+#include "ashr_interfaces/srv/check_ripeness.hpp" 
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+
 #define FRUIT_SAT_MIN   40
 #define FRUIT_VAL_MIN   40
 #define FRUIT_VAL_MAX   255
@@ -35,6 +41,9 @@ public:
 
 private:
   void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
+  void check_ripeness_callback(
+    const std::shared_ptr<ashr_interfaces::srv::CheckRipeness::Request> request,
+    std::shared_ptr<ashr_interfaces::srv::CheckRipeness::Response> response);
   
   cv::Mat detect_fruit_mask(const cv::Mat& hsv);
   cv::Mat detect_ripe_mask(const cv::Mat& hsv);
@@ -44,12 +53,25 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr detections_pub_;
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr debug_pub_;
+  
+  rclcpp::CallbackGroup::SharedPtr callback_group_;
+
+  // Service Server
+  rclcpp::Service<ashr_interfaces::srv::CheckRipeness>::SharedPtr ripeness_srv_;
 
   cv::Mat k_close_;
   cv::Mat k_open_;
   
   double smooth_ripe_;
   double smooth_present_;
+
+  // --- Synchronization variables for the 3-frame average ---
+  std::mutex eval_mutex_;
+  std::condition_variable eval_cv_;
+  std::atomic<bool> evaluation_requested_{false};
+  int frames_collected_{0};
+  double accum_ripe_{0.0};
+  const int target_frames_{3};
 };
 }  // namespace vision
 

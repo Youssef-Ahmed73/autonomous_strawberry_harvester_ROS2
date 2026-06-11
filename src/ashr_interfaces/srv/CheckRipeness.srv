@@ -1,0 +1,5 @@
+# Request
+---
+# Response
+bool is_ripe
+float32 ripeness_percentage

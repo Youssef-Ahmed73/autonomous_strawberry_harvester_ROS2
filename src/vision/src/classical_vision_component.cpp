@@ -8,7 +8,6 @@ ClassicalVisionComponent::ClassicalVisionComponent(const rclcpp::NodeOptions & o
   smooth_ripe_(0.0),
   smooth_present_(0.0)
 {
-  // Declare the parameter (defaults to true for development)
   this->declare_parameter("debug_viz", true);
 
   k_close_ = cv::Mat::ones(15, 15, CV_8U);
@@ -16,12 +15,25 @@ ClassicalVisionComponent::ClassicalVisionComponent(const rclcpp::NodeOptions & o
 
   rclcpp::QoS qos_profile = rclcpp::SensorDataQoS();
   
+  callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+
+  auto sub_opt = rclcpp::SubscriptionOptions();
+  sub_opt.callback_group = callback_group_;
+
   image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
     "image_raw", qos_profile,
-    std::bind(&ClassicalVisionComponent::image_callback, this, std::placeholders::_1));
+    std::bind(&ClassicalVisionComponent::image_callback, this, std::placeholders::_1),
+    sub_opt);
 
   detections_pub_ = this->create_publisher<vision_msgs::msg::Detection2DArray>("detections", 10);
   debug_pub_ = this->create_publisher<sensor_msgs::msg::Image>("detections_debug", 10);
+
+  ripeness_srv_ = this->create_service<ashr_interfaces::srv::CheckRipeness>(
+    "verify_ripeness",
+    std::bind(&ClassicalVisionComponent::check_ripeness_callback, this, std::placeholders::_1, std::placeholders::_2),
+    rmw_qos_profile_services_default,
+    callback_group_
+  );
 
   RCLCPP_INFO(this->get_logger(), "Classical Vision Component initialized.");
 }
@@ -113,9 +125,39 @@ void ClassicalVisionComponent::draw_pixel_map(cv::Mat& frame, const std::vector<
   cv::putText(frame, "pixel map", cv::Point(map_x, map_y - 6), cv::FONT_HERSHEY_SIMPLEX, 0.38, cv::Scalar(180, 180, 180), 1);
 }
 
+void ClassicalVisionComponent::check_ripeness_callback(
+  const std::shared_ptr<ashr_interfaces::srv::CheckRipeness::Request> request,
+  std::shared_ptr<ashr_interfaces::srv::CheckRipeness::Response> response)
+{
+  (void)request;
+  RCLCPP_INFO(this->get_logger(), "Ripeness check requested. Averaging %d frames...", target_frames_);
+
+  std::unique_lock<std::mutex> lock(eval_mutex_);
+  
+  frames_collected_ = 0;
+  accum_ripe_ = 0.0;
+  evaluation_requested_ = true;
+
+  bool success = eval_cv_.wait_for(lock, std::chrono::seconds(2), [this]{ return frames_collected_ >= target_frames_; });
+
+  evaluation_requested_ = false;
+
+  if (success) {
+    double average_ripe_pct = accum_ripe_ / target_frames_;
+    response->ripeness_percentage = average_ripe_pct;
+    response->is_ripe = (average_ripe_pct > RIPE_THRESHOLD);
+    
+    RCLCPP_INFO(this->get_logger(), "Inspection complete. Ripe Pct: %.2f%%. Is Ripe: %s", 
+                average_ripe_pct, response->is_ripe ? "TRUE" : "FALSE");
+  } else {
+    RCLCPP_WARN(this->get_logger(), "Ripeness check timed out! Camera might be disconnected.");
+    response->ripeness_percentage = 0.0;
+    response->is_ripe = false;
+  }
+}
+
 void ClassicalVisionComponent::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
-  // Check the parameter right at the start of the callback
   bool debug_viz = this->get_parameter("debug_viz").as_bool();
 
   cv_bridge::CvImagePtr cv_ptr;
@@ -129,15 +171,14 @@ void ClassicalVisionComponent::image_callback(const sensor_msgs::msg::Image::Sha
   cv::Mat frame = cv_ptr->image;
   cv::Mat frame_orig;
   if (debug_viz) {
-    frame_orig = frame.clone(); // Only clone the full frame if we are actually rendering visualizations
+    frame_orig = frame.clone();
   }
 
   double frame_area = frame.rows * frame.cols;
-  cv::Mat fruit_mask = detect_fruit_mask(frame); // Uses current frame transformed inside helpers if needed
+  cv::Mat fruit_mask = detect_fruit_mask(frame);
   cv::Mat hsv;
   cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
   
-  // Re-verify masks logic against hsv matrix
   fruit_mask = detect_fruit_mask(hsv);
   cv::Mat ripe_mask = detect_ripe_mask(hsv);
 
@@ -147,6 +188,8 @@ void ClassicalVisionComponent::image_callback(const sensor_msgs::msg::Image::Sha
   double raw_present = 0.0, raw_ripe = 0.0;
   vision_msgs::msg::Detection2DArray detections_msg;
   detections_msg.header = msg->header;
+
+  double current_frame_ripe_pct = 0.0;
 
   if (!contours.empty()) {
     std::sort(contours.begin(), contours.end(), [](const std::vector<cv::Point>& a, const std::vector<cv::Point>& b) {
@@ -171,8 +214,9 @@ void ClassicalVisionComponent::image_callback(const sensor_msgs::msg::Image::Sha
       raw_present = std::min((hull_area / frame_area) * 250.0, 100.0);
       raw_ripe = ripe_pct;
       bool is_ripe = ripe_pct > RIPE_THRESHOLD;
+      
+      current_frame_ripe_pct = ripe_pct;
 
-      // --- EXPENSIVE DRAWING CALLS BLOCKED HERE IN DEPLOYMENT ---
       if (debug_viz) {
         cv::Scalar clr_cnt = is_ripe ? cv::Scalar(0, 220, 0) : cv::Scalar(0, 140, 255);
         cv::Scalar clr_hull = is_ripe ? cv::Scalar(0, 255, 180) : cv::Scalar(0, 200, 255);
@@ -195,7 +239,6 @@ void ClassicalVisionComponent::image_callback(const sensor_msgs::msg::Image::Sha
         draw_pixel_map(frame, cnt, frame_orig);
       }
 
-      // Populate ROS Bounding Box Array (Always happens)
       vision_msgs::msg::Detection2D detection;
       detection.bbox.center.position.x = bbox.x + bbox.width / 2.0;
       detection.bbox.center.position.y = bbox.y + bbox.height / 2.0;
@@ -212,13 +255,23 @@ void ClassicalVisionComponent::image_callback(const sensor_msgs::msg::Image::Sha
     }
   }
 
+  if (evaluation_requested_.load()) {
+    std::lock_guard<std::mutex> lock(eval_mutex_);
+    if (frames_collected_ < target_frames_) {
+      accum_ripe_ += current_frame_ripe_pct;
+      frames_collected_++;
+      if (frames_collected_ >= target_frames_) {
+        eval_cv_.notify_one();
+      }
+    }
+  }
+
   double decay = (raw_present == 0.0) ? 0.70 : 1.0;
   smooth_present_ = (EMA_ALPHA * raw_present + (1.0 - EMA_ALPHA) * smooth_present_) * decay;
   smooth_ripe_ = (EMA_ALPHA * raw_ripe + (1.0 - EMA_ALPHA) * smooth_ripe_) * decay;
 
   detections_pub_->publish(detections_msg);
 
-  // Only spend bandwidth packing and publishing the image if debug mode is active
   if (debug_viz) {
     sensor_msgs::msg::Image::SharedPtr debug_msg = cv_bridge::CvImage(msg->header, "bgr8", frame).toImageMsg();
     debug_pub_->publish(*debug_msg);

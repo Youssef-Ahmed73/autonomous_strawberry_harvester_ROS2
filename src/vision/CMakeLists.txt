@@ -15,6 +15,7 @@ find_package(OpenCV REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(vision_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(ashr_interfaces REQUIRED)
 
 include_directories(include)
 
@@ -26,7 +27,6 @@ target_include_directories(camera_component PRIVATE
 target_link_libraries(camera_component ${OpenCV_LIBS})
 ament_target_dependencies(camera_component rclcpp rclcpp_components sensor_msgs cv_bridge)
 rclcpp_components_register_node(camera_component PLUGIN "vision::CameraComponent" EXECUTABLE camera_node)
-
 
 # --- Find ONNX Runtime ---
 set(ONNXRUNTIME_DIR "/opt/onnxruntime/onnxruntime-linux-x64-gpu-1.17.1") 
@@ -41,7 +41,7 @@ add_library(inference_component SHARED src/inference_component.cpp)
 target_include_directories(inference_component PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
-  ${ONNXRUNTIME_DIR}/include # Crucial for finding cuda_provider_factory.h
+  ${ONNXRUNTIME_DIR}/include
 )
 target_link_libraries(inference_component ${OpenCV_LIBS} ${ONNXRUNTIME_LIB})
 ament_target_dependencies(inference_component rclcpp rclcpp_components sensor_msgs cv_bridge vision_msgs)
@@ -71,9 +71,8 @@ target_include_directories(classical_vision_component PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(classical_vision_component ${OpenCV_LIBS})
-ament_target_dependencies(classical_vision_component rclcpp rclcpp_components sensor_msgs cv_bridge vision_msgs geometry_msgs)
+ament_target_dependencies(classical_vision_component rclcpp rclcpp_components sensor_msgs cv_bridge vision_msgs geometry_msgs ashr_interfaces)
 rclcpp_components_register_node(classical_vision_component PLUGIN "vision::ClassicalVisionComponent" EXECUTABLE classical_vision_node)
-
 
 install(TARGETS 
   camera_component 
