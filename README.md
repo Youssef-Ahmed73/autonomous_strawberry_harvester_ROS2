@@ -16,14 +16,6 @@ The ASHR project is a modular ROS 2 Humble-based system for autonomous strawberr
 
 The system is designed for flexibility: you can launch the robot in simulation (with Gazebo and full perception stack) or on real hardware. Communication between components is handled via ROS 2 topics and services, with clear conventions for frames and topic names. Synchronization between perception and planning is achieved using message filters and approximate time policies, ensuring robust operation even with sensor delays.
 
-Key architectural goals:
-- Decouple perception, planning, and actuation for easy testing and extension
-- Support both simulation and real hardware with minimal launch changes
-- Maintain clear frame and topic conventions for reliable integration
-- Enable AI-driven perception and planning by exposing all sensor and state data in standard ROS 2 formats
-
-This modular design allows future contributors to extend any layer (e.g., swap in a new vision model, add a new controller, or change the robot geometry) with minimal impact on the rest of the stack.
-
 ## Pre-installing configuration
 Before you download the repo make sure you:
 
@@ -48,37 +40,68 @@ rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 ```
 
-## Starting the robot
+# Starting the Software stack
 
-You can launch either the simulation or the real robot. In both cases, make sure to source the workspace first.
+This repository provides three ways to run the robot stack:
+
+1. Real hardware
+2. Gazebo simulation
+3. Isaac Sim simulation
+
+Each of the launch files below starts the complete robot stack for its respective environment, including robot control, motion planning, and supporting services. In most cases, these are the only launch files required to operate the system.
+
+Before launching any configuration, source the workspace:
 
 ```bash
 cd ashr_ws
 source install/setup.bash
 ```
 
-### Launching gazebo 
+## Full Stack Launch Options
 
-Use the following command to start the robot in Gazebo along with all required simulation components:
+### Gazebo Simulation
+
+Launch the complete robot stack in Gazebo:
+
 ```bash
 ros2 launch probot_bringup gazebo_bringup.launch.py
 ```
 
-### Launching joystick teleoperation
-Use the following command to start the Xbox controller interface for MoveIt Servo teleoperation:
+### Real Hardware
+
+Launch the complete robot stack on the physical robot:
+
+```bash
+ros2 launch probot_bringup hardware_demo.launch.py
+```
+
+### Isaac Sim Simulation
+
+Launch the complete robot stack connected to Isaac Sim:
+
+```bash
+ros2 launch probot_bringup probot_bringup.launch.py use_mock_hardware:=false use_isaac:=true use_sim_time:=true
+```
+
+## Standalone Utilities
+
+The launch files above are intended to start the complete system. However, individual components can also be launched independently for development, testing, or debugging purposes.
+
+### Joystick Teleoperation
+
+Launch the Xbox controller interface for MoveIt Servo teleoperation:
+
 ```bash
 ros2 launch teleoperation joystick_servo.launch.py
 ```
 
-### Launching vision
-Use the following command to start the Kinect-based vision pipeline:
+### Vision Pipeline
+
+Launch the Kinect-based vision pipeline:
+
 ```bash
 ros2 launch vision kinect.launch.py
 ```
 
-### Launching real hardware
-Use the following command to start the robot on real hardware:
-```bash
-ros2 launch probot_bringup hardware_demo.launch.py
-```
-Note: At the moment, this launch file starts only the robot hardware interface and does not include the camera nodes.
+These utility launch files can be used independently or alongside any of the full-stack launch configurations when additional functionality is required.
+
