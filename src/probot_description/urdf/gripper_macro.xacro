@@ -315,6 +315,14 @@
       <child link="LED2_Link" />
     </joint>
 
+    <!-- Grasp target frame -->
+    <link name="grasp_target_link" />
+    <joint name="grasp_target_joint" type="fixed">
+      <origin xyz="0 0 0.1035" rpy="0 0 0" />
+      <parent link="Container_link" />
+      <child link="grasp_target_link" />
+    </joint>
+
     <!-- ========================================================= -->
     <!-- GAZEBO SENSORS: ESP CAMS                                  -->
     <!-- ========================================================= -->
