@@ -30,6 +30,9 @@ def generate_launch_description():
         package='rclcpp_components',
         executable='component_container_mt',
         composable_node_descriptions=[
+            # --------------------------------------------------
+            # Main Camera (Kinect) - Inference & Target Locator
+            # --------------------------------------------------
             ComposableNode(
                 package='vision',
                 plugin='vision::InferenceComponent',
@@ -55,6 +58,48 @@ def generate_launch_description():
                     # Map the locator inputs to Gazebo's bridged Kinect Depth & Info topics
                     ('kinect/depth/image_raw', '/camera/depth/image_raw'),
                     ('kinect/depth/camera_info', '/camera/depth/camera_info')
+                ],
+                extra_arguments=[{'use_intra_process_comms': True}]
+            ),
+
+            # --------------------------------------------------
+            # ESP Camera 1 - Classical Vision Pipeline
+            # --------------------------------------------------
+            ComposableNode(
+                package='vision',
+                plugin='vision::ClassicalVisionComponent',
+                name='classical_vision_esp1',
+                parameters=[
+                    {'debug_viz': True},
+                    {'use_sim_time': True}
+                ],
+                remappings=[
+                    ('image_raw', '/camera/esp1/image_raw'),
+                    # Remap outputs to prevent cross-talk with Kinect and ESP2
+                    ('detections', 'esp1/detections'),
+                    ('detections_debug', 'esp1/detections_debug'),
+                    ('/verify_ripeness', '/esp1/verify_ripeness') 
+                ],
+                extra_arguments=[{'use_intra_process_comms': True}]
+            ),
+
+            # --------------------------------------------------
+            # ESP Camera 2 - Classical Vision Pipeline
+            # --------------------------------------------------
+            ComposableNode(
+                package='vision',
+                plugin='vision::ClassicalVisionComponent',
+                name='classical_vision_esp2',
+                parameters=[
+                    {'debug_viz': True},
+                    {'use_sim_time': True}
+                ],
+                remappings=[
+                    ('image_raw', '/camera/esp2/image_raw'),
+                    # Remap outputs to prevent cross-talk with Kinect and ESP1
+                    ('detections', 'esp2/detections'),
+                    ('detections_debug', 'esp2/detections_debug'),
+                    ('/verify_ripeness', '/esp2/verify_ripeness')
                 ],
                 extra_arguments=[{'use_intra_process_comms': True}]
             ),

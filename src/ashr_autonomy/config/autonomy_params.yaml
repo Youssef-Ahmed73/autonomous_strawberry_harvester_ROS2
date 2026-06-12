@@ -1,0 +1,7 @@
+autonomy_fsm_node:
+  ros__parameters:
+    harvests_before_dropoff: 10
+    pre_grasp_distance: 0.15
+    engulf_plunge_depth: 0.18
+    retreat_distance: 0.20
+    cartesian_speed_fraction: 0.1
