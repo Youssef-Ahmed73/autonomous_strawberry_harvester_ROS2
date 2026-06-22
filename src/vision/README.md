@@ -38,6 +38,8 @@ The package is composed of five core component nodes:
 
 * `vision/launch/kinect.launch.py` starts the Kinect, Inference, and Target Locator components in a multi-threaded component container (`component_container_mt`).
 * `vision/launch/classical_vision.launch.py` launches the camera alongside the `ClassicalVisionComponent` for hardware setups where GPU inference is unnecessary or unavailable.
+* `vision/launch/esp_vision.launch.py` brings up a single ESP camera and inference pipeline using composable nodes.
+* `vision/launch/two_esp.launch.py` brings up two ESP camera streams in separate composable node containers for multi-camera setups.
 * The `InferenceComponent` and `ClassicalVisionComponent` are designed as drop-in replacements for one another. They both expect input on `image_raw` and produce the exact same `vision_msgs/msg/Detection2DArray` structure on `detections`.
 
 ## Communication graph

@@ -18,3 +18,10 @@ This package acts as a pure structural dependency. It contains no executable nod
   * **Response:** * `bool is_ripe`: Final threshold-evaluated boolean indicating if the target is ready for harvest.
     * `float32 ripeness_percentage`: The calculated confidence/percentage of the target's ripeness.
   * **Usage:** Called by the autonomy state machine (`ashr_autonomy`) when the robot end-effector has engulfed a target. Serviced by the `vision` package (`ClassicalVisionComponent`) to return a multi-frame averaged ripeness score from the internal gripper cameras.
+
+* **`GetHarvestTarget.srv`**
+  * **Role:** Request the current target pose for the next harvest candidate.
+  * **Request:** (Empty)
+  * **Response:** * `bool success`: Whether a valid target pose is currently available.
+    * `geometry_msgs/PoseStamped target_pose`: The pose of the harvest target in the vision/camera coordinate frame.
+  * **Usage:** Called by the autonomy state machine (`ashr_autonomy`) to obtain the latest detection pose from the vision pipeline via the `target_server`.

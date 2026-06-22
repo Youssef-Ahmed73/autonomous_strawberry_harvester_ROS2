@@ -1,7 +1,7 @@
 # WELCOME TO ASHR GRADUATION PROJECT 🍓
 
 ## About the project
-I will write this later XD
+ASHR is a modular ROS 2 Humble-based system for autonomous strawberry harvesting. It integrates motion planning, perception, hardware abstraction, and simulation to enable the Probot arm to detect, approach, inspect, and harvest strawberries in both simulated and real environments.
 
 ## Software architecture
 The ASHR project is a modular ROS 2 Humble-based system for autonomous strawberry harvesting, integrating robot motion, perception, and simulation. The architecture is organized into several core packages:
@@ -13,6 +13,7 @@ The ASHR project is a modular ROS 2 Humble-based system for autonomous strawberr
 - **probot_hardware**: Implements the hardware interface plugin for ROS 2 control, translating joint commands into actuator messages for the real robot.
 - **ashr_simulation**: Supplies Gazebo world files, Isaac/ROS 2 simulation assets, and bridge configuration for simulation, enabling seamless integration between ROS 2 and the simulator.
 - **vision**: Handles perception, including camera capture, object detection (using ONNX models), and 3D target localization by synchronizing RGB, depth, and detection streams.
+- **ashr_autonomy**: Coordinates the harvest cycle with a timer-driven finite state machine, target acquisition, ripeness verification, and MoveIt 2 Pilz motion planning.
 - **ashr_interfaces**: Defines the custom ROS 2 messages, services, and actions used for inter-package communication across the system (e.g., ripeness verification).
 
 The system is designed for flexibility: you can launch the robot in simulation (with Gazebo and full perception stack) or on real hardware. Communication between components is handled via ROS 2 topics and services, with clear conventions for frames and topic names. Synchronization between perception and planning is achieved using message filters and approximate time policies, ensuring robust operation even with sensor delays.

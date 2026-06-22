@@ -1,4 +1,4 @@
-# ashr_autonomy (under construction 🚧)
+# ashr_autonomy
 
 ## Overview
 The `ashr_autonomy` package serves as the central "Brain" of the Autonomous Strawberry Harvesting Robot (ASHR) project. It orchestrates the entire harvesting cycle by bridging high-level decision-making with low-level robotic control. 
@@ -58,30 +58,3 @@ To bypass launch file clutter and parameter injection bugs, configurations are s
 * **`moveit_pilz_config.yaml`**: Injects MoveItCpp configurations directly into the Python node, overriding the builder. It defines the `planning_scene_monitor`, loads the `pilz_industrial_motion_planner` pipeline, configures the kinematics adapters (`FixStartStateBounds`, etc.), and provides default scaling factors.
 
 ---
-
-## Progress Report & Current Roadmap
-
-### Accomplished Milestones
-* [x] Python FSM architecture designed and integrated with `MultiThreadedExecutor`.
-* [x] Hardcoded C++ dictionaries removed from `autonomy.launch.py` and modularized into pristine YAML.
-* [x] `MoveItPy` API successfully bridged to the underlying `moveit_cpp` engine.
-* [x] Pilz planner correctly initialized with `PTP` dynamic assignment resolving the "Empty String" exception.
-* [x] Acceleration limits successfully configured to satisfy industrial planning kinematics constraints.
-* [x] The `IDLE` state correctly receives a target from the vision pipeline and transitions to `APPROACH`.
-
-### Current Blockers (The TF2 / IK Issue)
-The FSM is currently aborting the `APPROACH` state and returning to `IDLE` due to a coordinate frame disconnect. 
-
-**Error Output:**
-`Unable to transform from frame 'probot_anno/robot_base/kinect_rgbd' to frame 'world'.`
-`Failed to compute inverse kinematics for link: grasp_target_link of goal pose`
-
-**Diagnosis:**
-The vision pipeline is identifying the strawberry relative to the camera lens (`kinect_rgbd`). MoveIt is attempting to plan the arm movement relative to the base of the robot (`world`). Because ROS 2's `tf2` tree does not have a static transform connecting the camera to the robot, MoveIt's KDL Inverse Kinematics solver cannot map the mathematical path.
-
-### Next Action Items
-To resolve the IK failure and unblock physical movement in Gazebo:
-
-1. **Verify URDF Connectivity:** Check `probot_anno.urdf.xacro`. Ensure there is a `<joint>` (typically `type="fixed"`) connecting the `base_link` (or `world`) to the `probot_anno/robot_base/kinect_rgbd` link.
-2. **Verify Target Publisher:** If the URDF is correct, verify that `target_locator_node` is assigning the exact, correct `header.frame_id` to the `PoseStamped` message it sends to the target server. 
-3. **TF Tree Debugging:** Run `ros2 run tf2_tools view_frames` while the simulation is active to visually inspect the gap between the camera frame and the arm frames.
