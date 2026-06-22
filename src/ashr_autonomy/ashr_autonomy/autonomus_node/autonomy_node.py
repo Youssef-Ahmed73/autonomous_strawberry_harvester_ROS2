@@ -161,7 +161,7 @@ class AutonomyFSM(Node):
         
         if plan_result:
             self.get_logger().info("Plan successful. Executing...")
-            success = self.moveit.execute(plan_result.trajectory, blocking=True)
+            success = self.moveit.execute("arm", plan_result.trajectory, blocking=True)
             return success
         else:
             self.get_logger().error("Planning failed.")

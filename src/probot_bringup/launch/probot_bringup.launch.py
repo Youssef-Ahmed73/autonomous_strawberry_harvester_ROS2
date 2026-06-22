@@ -122,6 +122,7 @@ def generate_launch_description():
         package='ros_gz_sim',
         executable='create',
         arguments=['-topic', 'robot_description', '-name', 'probot_anno', '-z', '0.017'],
+        # arguments=['-topic', 'robot_description', '-name', 'probot_anno', '-z', '0.767'],
         output='screen',
         condition=IfCondition(use_gazebo)
     )

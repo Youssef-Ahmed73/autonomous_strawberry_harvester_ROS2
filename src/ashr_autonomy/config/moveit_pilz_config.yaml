@@ -38,3 +38,9 @@ autonomy_fsm_node:
       start_state_max_dt: 0.5
       jiggle_fraction: 0.02
       max_sampling_attempts: 100
+
+    # Defining tolerance ranges  
+    trajectory_execution:
+      allowed_execution_duration_scaling: 1.2
+      allowed_goal_duration_margin: 0.5
+      allowed_start_tolerance: 0.05
